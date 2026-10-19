@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+           Schema::table('doctor_units', function (Blueprint $table) {
+        if (!Schema::hasColumn('doctor_units', 'doctor_department_id')) {
+            $table->foreignId('doctor_department_id')
+                  ->after('id')
+                  ->constrained('doctor_departments')
+                        ->onDelete('cascade');
+                }
+            });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+         Schema::table('doctor_units', function (Blueprint $table) {
+            $table->dropForeign(['doctor_department_id']);
+            $table->dropColumn('doctor_department_id');
+        });
+    }
+};

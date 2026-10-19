@@ -1,0 +1,568 @@
+<nav id="sidebar" class="sidebar-wrapper">
+
+    <!-- Sidebar profile starts -->
+    <div class="sidebar-profile">
+      {{-- <img src="{{asset('assets/images/user6.png')}}" class="img-shadow img-3x me-3 rounded-5" alt="Hospital Admin Templates"> --}}
+      @if(Auth::guard('nurse')->user()->profile_image)
+      <img src="{{ asset('storage/' . Auth::guard('nurse')->user()->profile_image) }}" 
+                class="img-shadow img-3x me-3 rounded-5" alt="Doctor Profile">
+        @else
+            <img src="{{ asset('assets/images/user2.png') }}" class="img-shadow img-3x me-3 rounded-5" alt="Default Profile">
+        @endif
+      
+      <div class="m-0">
+        <h5 class="mb-1 profile-name text-nowrap text-truncate">{{ Auth::guard('nurse')->user()->full_name }}</h5>
+        <p class="m-0 small profile-name text-nowrap text-truncate">Nurse · {{ Auth::guard('nurse')->user()->ward?->name ?? 'Ward pending' }}</p>
+      </div>
+    </div>
+    <!-- Sidebar profile ends -->
+
+    <!-- Sidebar menu starts -->
+    <div class="sidebarMenuScroll">
+      <ul class="sidebar-menu">
+        <li class="{{ request()->routeIs('nurse.dashboard') ? 'active current-page' : '' }}">
+          <a href="{{ route('nurse.dashboard') }}">
+            <i class="ri-home-6-line"></i>
+            <span class="menu-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="{{ request()->routeIs('nurse.notifications.*') ? 'active current-page' : '' }}">
+          <a href="{{ route('nurse.notifications.index') }}">
+            <i class="ri-notification-3-line"></i>
+            <span class="menu-text">Notifications</span>
+            @php($unreadNotificationCount = Auth::guard('nurse')->user()->unreadNotifications()->count())
+            @if ($unreadNotificationCount)
+              <span class="badge bg-danger ms-auto">{{ $unreadNotificationCount }}</span>
+            @endif
+          </a>
+        </li>
+        {{-- <li>
+          <a href="dashboard2.html">
+            <i class="ri-home-smile-2-line"></i>
+            <span class="menu-text">Medical Dashboard</span>
+          </a>
+        </li>
+        <li class="{{ request()->routeIs('nurse.patient', 'nurse.show_patient', 'nurse.patients.*') ? 'active current-page' : '' }}">
+          <a href="dashboard3.html">
+            <i class="ri-home-5-line"></i>
+            <span class="menu-text">Dentist Dashboard</span>
+          </a>
+        </li> --}}
+        <li class="treeview">
+          <a href="#">
+            <i class="ri-stethoscope-line"></i>
+            <span class="menu-text">Profile</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="{{ route('nurse.profile') }}">Update Profile</a>
+            </li>
+            <li>
+              <a href="{{ route('nurse.available') }}">Availability</a>
+            </li>
+
+            {{-- <li>
+              <a href="doctors-cards.html">Doctors Cards</a>
+            </li>
+            <li>
+              <a href="doctors-profile.html">Doctors Profile</a>
+            </li>
+            <li>
+              <a href="add-doctors.html">Add Doctor</a>
+            </li>
+            <li>
+              <a href="edit-doctors.html">Edit Doctor</a>
+            </li> --}}
+          </ul>
+        </li>
+        <li>
+          <a href="{{ route('nurse.patient') }}">
+            <i class="ri-heart-pulse-line"></i>
+            <span class="menu-text">{{ Auth::guard('nurse')->user()->ward?->name ?? 'My patients' }}</span>
+          </a>
+        </li>
+        <li class="{{ request()->routeIs('nurse.patients.create') ? 'active current-page' : '' }}">
+          <a href="{{ route('nurse.patients.create') }}">
+            <i class="ri-user-add-line"></i>
+            <span class="menu-text">Add Patient</span>
+          </a>
+        </li>
+
+        <li class="treeview">
+  <a href="#!">
+    <i class="ri-file-list-3-line"></i>
+    <span class="menu-text">Digital Nursing</span>
+  </a>
+  <ul class="treeview-menu">
+    <li><a href="{{ route('nurse.reports.index') }}">Nursing Reports</a></li>
+    <li><a href="{{ route('nurse.statistics.index') }}">Nursing Statistics</a></li>
+    <li><a href="{{ route('nurse.rosters.index') }}">Duty Rosters</a></li>
+  </ul>
+</li>
+
+
+
+                <li>
+          <a href="{{ route('nurse.news') }}">
+            <i class="ri-news-line"></i>
+            <span class="menu-text">News & Updates</span>
+          </a>
+        </li>
+
+
+
+
+
+        {{-- <li class="treeview">
+          <a href="#!">
+            <i class="ri-heart-pulse-line"></i>
+            <span class="menu-text">Patients</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="{{ route('doctor.patient') }}">Patients Assign</a>
+            </li>
+            <li>
+              <a href="patients-list.html">Patients List</a>
+            </li>
+            <li>
+              <a href="add-patient.html">Add Patient</a>
+            </li>
+            <li>
+              <a href="edit-patient.html">Edit Patient Details</a>
+            </li>
+          </ul>
+        </li> --}}
+        {{-- <li class="treeview">
+          <a href="#!">
+            <i class="ri-nurse-line"></i>
+            <span class="menu-text">Staff</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="staff.html">Staff List</a>
+            </li>
+            <li>
+              <a href="add-staff.html">Add Staff</a>
+            </li>
+            <li>
+              <a href="edit-staff.html">Edit Staff Details</a>
+            </li>
+          </ul>
+        </li> --}}
+        {{-- <li class="treeview">
+          <a href="#!">
+            <i class="ri-dossier-line"></i>
+            <span class="menu-text">Appointments</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="appointments.html">Appointments</a>
+            </li>
+            <li>
+              <a href="appointments-list.html">Appointments List</a>
+            </li>
+            <li>
+              <a href="book-appointment.html">Book Appointment</a>
+            </li>
+            <li>
+              <a href="edit-appointment.html">Edit Appointment</a>
+            </li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-building-2-line"></i>
+            <span class="menu-text">Departments</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="departments-list.html">Departments List</a>
+            </li>
+            <li>
+              <a href="add-department.html">Add Department</a>
+            </li>
+            <li>
+              <a href="edit-department.html">Edit Department</a>
+            </li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-secure-payment-line"></i>
+            <span class="menu-text">Accounts</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="income.html">Income</a>
+            </li>
+            <li>
+              <a href="payments.html">Payments</a>
+            </li>
+            <li>
+              <a href="invoices.html">Invoices</a>
+            </li>
+            <li>
+              <a href="invoice-details.html">Invoice Details</a>
+            </li>
+            <li>
+              <a href="create-invoice.html">Create Invoice</a>
+            </li>
+            <li>
+              <a href="expenses.html">Expenses</a>
+            </li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-group-2-line"></i>
+            <span class="menu-text">Human Resources</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="hr-approvals.html">HR Approvals</a>
+            </li>
+            <li>
+              <a href="staff-attendance.html">Attendance</a>
+            </li>
+            <li>
+              <a href="staff-leaves.html">Staff Leaves</a>
+            </li>
+            <li>
+              <a href="staff-holidays.html">Holidays</a>
+            </li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-money-dollar-circle-line"></i>
+            <span class="menu-text">Salaries</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="salaries.html">Salary List</a>
+            </li>
+            <li>
+              <a href="payslip.html">Payslip</a>
+            </li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-hotel-bed-line"></i>
+            <span class="menu-text">Rooms</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="room-statistics.html">Statistics</a>
+            </li>
+            <li>
+              <a href="rooms-allotted.html">Rooms Allotted</a>
+            </li>
+            <li>
+              <a href="rooms-by-dept.html">Rooms By Department</a>
+            </li>
+            <li>
+              <a href="available-rooms.html">Available Rooms</a>
+            </li>
+            <li>
+              <a href="book-room.html">Book Room</a>
+            </li>
+            <li>
+              <a href="add-room.html">Add Room</a>
+            </li>
+            <li>
+              <a href="edit-room.html">Edit Room</a>
+            </li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-car-washing-line"></i>
+            <span class="menu-text">Ambulance</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="ambulance-list.html">Ambulance List</a>
+            </li>
+            <li>
+              <a href="add-ambulance.html">Add Ambulance</a>
+            </li>
+            <li>
+              <a href="edit-ambulance.html">Edit Ambulance</a>
+            </li>
+            <li>
+              <a href="ambulance-call-list.html">Ambulance Call List</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="events.html">
+            <i class="ri-calendar-line"></i>
+            <span class="menu-text">Event Management</span>
+          </a>
+        </li>
+        <li>
+          <a href="gallery.html">
+            <i class="ri-tent-line"></i>
+            <span class="menu-text">Gallery</span>
+          </a>
+        </li>
+        <li>
+          <a href="news.html">
+            <i class="ri-news-line"></i>
+            <span class="menu-text">News & Updates</span>
+          </a>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-color-filter-line"></i>
+            <span class="menu-text">UI Elements</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="alerts.html">Alerts</a>
+            </li>
+            <li>
+              <a href="avatars.html">Avatars</a>
+            </li>
+            <li>
+              <a href="badges.html">Badges</a>
+            </li>
+            <li>
+              <a href="buttons.html">Buttons</a>
+            </li>
+            <li>
+              <a href="button-groups.html">Button Groups</a>
+            </li>
+            <li>
+              <a href="cards.html">Cards</a>
+            </li>
+            <li>
+              <a href="advanced-cards.html">Advanced Cards</a>
+            </li>
+            <li>
+              <a href="dropdowns.html">Dropdowns</a>
+            </li>
+            <li>
+              <a href="list-items.html">List Items</a>
+            </li>
+            <li>
+              <a href="progress.html">Progress Bars</a>
+            </li>
+            <li>
+              <a href="placeholders.html">Placeholders</a>
+            </li>
+            <li>
+              <a href="spinners.html">Spinners</a>
+            </li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-notification-badge-line"></i>
+            <span class="menu-text">Jquery Components</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="accordions.html">Accordions</a>
+            </li>
+            <li>
+              <a href="carousel.html">Carousel</a>
+            </li>
+            <li>
+              <a href="modals.html">Modals</a>
+            </li>
+            <li>
+              <a href="popovers.html">Popovers</a>
+            </li>
+            <li>
+              <a href="tabs.html">Tabs</a>
+            </li>
+            <li>
+              <a href="tooltips.html">Tooltips</a>
+            </li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-terminal-window-line"></i>
+            <span class="menu-text">Forms</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="form-inputs.html">Form Inputs</a>
+            </li>
+            <li>
+              <a href="form-checkbox-radio.html">Checkbox &amp; Radio</a>
+            </li>
+            <li>
+              <a href="form-file-input.html">File Input</a>
+            </li>
+            <li>
+              <a href="form-validations.html">Validations</a>
+            </li>
+            <li>
+              <a href="date-time-pickers.html">Date Time Pickers</a>
+            </li>
+            <li>
+              <a href="form-masks.html">Input Masks</a>
+            </li>
+            <li>
+              <a href="form-tags.html">Input Tags</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="tables.html">
+            <i class="ri-table-line"></i>
+            <span class="menu-text">Tables</span>
+          </a>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-bar-chart-line"></i>
+            <span class="menu-text">Graphs</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="apex.html">Apex Graphs</a>
+            </li>
+            <li>
+              <a href="morris.html">Morris Graphs</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="maps.html">
+            <i class="ri-road-map-line"></i>
+            <span class="menu-text">Vector Maps</span>
+          </a>
+        </li>
+        <li>
+          <a href="icons.html">
+            <i class="ri-send-plane-2-line"></i>
+            <span class="menu-text">Icons</span>
+          </a>
+        </li>
+        <li>
+          <a href="settings.html">
+            <i class="ri-settings-5-line"></i>
+            <span class="menu-text">Account Settings</span>
+          </a>
+        </li>
+        <li>
+          <a href="typography.html">
+            <i class="ri-font-size"></i>
+            <span class="menu-text">Typography</span>
+          </a>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-login-circle-line"></i>
+            <span class="menu-text">Login/Signup</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="login.html">Login</a>
+            </li>
+            <li>
+              <a href="signup.html">Signup</a>
+            </li>
+            <li>
+              <a href="forgot-password.html">Forgot Password</a>
+            </li>
+            <li>
+              <a href="reset-password.html">Reset Password</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="page-not-found.html">
+            <i class="ri-alert-line"></i>
+            <span class="menu-text">Page Not Found</span>
+          </a>
+        </li>
+        <li>
+          <a href="maintenance.html">
+            <i class="ri-auction-line"></i>
+            <span class="menu-text">Maintenance</span>
+          </a>
+        </li>
+        <li class="treeview">
+          <a href="#!">
+            <i class="ri-dropdown-list"></i>
+            <span class="menu-text">Menu Level</span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="#!">Level One Link</a>
+            </li>
+            <li>
+              <a href="#!">
+                Level One Menu
+                <i class="ri-arrow-right-s-line"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li>
+                  <a href="#!">Level Two Link</a>
+                </li>
+                <li>
+                  <a href="#!">Level Two Menu
+                    <i class="ri-arrow-right-s-line"></i>
+                  </a>
+                  <ul class="treeview-menu">
+                    <li>
+                      <a href="#!">Level Three Link</a>
+                    </li>
+                    <li>
+                      <a href="#!">Level Three Link</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="#!">Level One Link</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="default.html">
+            <i class="ri-send-plane-line"></i>
+            <span class="menu-text">External Link</span>
+          </a>
+        </li>
+        <li>
+          <a href="#!">
+            <i class="ri-exchange-line"></i>
+            <span class="menu-text">Chip</span>
+            <span class="badge bg-primary ms-auto">6</span>
+          </a>
+        </li>
+        <li>
+          <a href="#!">
+            <i class="ri-ticket-line"></i>
+            <span class="menu-text">Badge</span>
+            <span class="badge border border-primary text-primary ms-auto">Chip</span>
+          </a>
+        </li> --}}
+        {{-- <li>
+          <a href="#!" class="disabled">
+            <i class="ri-magic-line"></i>
+            <span class="menu-text">Disabled Link</span>
+          </a>
+        </li> --}}
+      </ul>
+    </div>
+    <!-- Sidebar menu ends -->
+
+    <!-- Sidebar contact starts -->
+    <div class="sidebar-contact">
+      <p class="fw-light mb-1 text-nowrap text-truncate">Emergency Contact</p>
+      <h5 class="m-0 lh-1 text-nowrap text-truncate">0987654321</h5>
+      <i class="ri-phone-line"></i>
+    </div>
+    <!-- Sidebar contact ends -->
+
+  </nav>
