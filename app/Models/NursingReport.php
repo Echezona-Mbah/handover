@@ -9,7 +9,7 @@ class NursingReport extends Model
     protected $fillable = [
         'hospital_id', 'ward_id', 'nurse_id', 'patient_id', 'report_type',
         'report_date', 'shift', 'summary', 'incidents', 'referrals',
-        'administrative_notes', 'status', 'submitted_at', 'reviewed_by', 'reviewed_at',
+        'administrative_notes', 'assigned_admin_id', 'target_admin_role', 'recipient_type', 'recipient_id', 'recipient_role', 'status', 'submitted_at', 'reviewed_by', 'reviewed_at',
     ];
 
     protected $casts = [
@@ -33,9 +33,15 @@ class NursingReport extends Model
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
+    public function assignedAdmin()
+    {
+        return $this->belongsTo(User::class, 'assigned_admin_id');
+    }
+
     public function reviews()
     {
         return $this->hasMany(NursingReportReview::class);
     }
-}
 
+    public function queries() { return $this->hasMany(NursingQuery::class); }
+}

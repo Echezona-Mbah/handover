@@ -11,6 +11,10 @@ class NurseDepartment extends Model
         'description',
     ];
 
+    public function wards()
+    {
+        return $this->hasMany(Ward::class, 'nurse_department_id');
+    }
 
 
     protected $table ='nurse_departments';

@@ -13,17 +13,26 @@
 
     <!-- App brand starts -->
     <div class="app-brand ms-3">
-      <a href="{{asset('dashboard')}}" class="d-lg-block d-none">
-        <img src="{{asset('img/unthlogo.jpg')}}" class="logo" alt="Medicare Admin Template">
+      <a href="{{ route('dentist.dashboard') }}" class="d-lg-block d-none">
+        <img src="{{asset('img/unthlogo.jpg')}}" class="logo" alt="Fandova dentist portal">
       </a>
-      <a href="{{asset('dashboard')}}" class="d-lg-none d-md-block">
-        <img src="{{asset('img/unthlogo.jpg')}}" class="logo" alt="Medicare Admin Template">
+      <a href="{{ route('dentist.dashboard') }}" class="d-lg-none d-md-block">
+        <img src="{{asset('img/unthlogo.jpg')}}" class="logo" alt="Fandova dentist portal">
       </a>
     </div>
     <!-- App brand ends -->
 
     <!-- App header actions starts -->
     <div class="header-actions">
+      @php
+        $dentistHeaderUser = Auth::guard('dentist')->user();
+        $dentistActivityNotifications = $dentistHeaderUser
+          ? $dentistHeaderUser->notifications()->latest()->limit(8)->get()
+          : collect();
+        $dentistUnreadActivityCount = $dentistHeaderUser
+          ? $dentistHeaderUser->unreadNotifications()->count()
+          : 0;
+      @endphp
 
       <!-- Search container starts -->
       <div class="search-container d-lg-block d-none mx-3">
@@ -31,6 +40,39 @@
         <i class="ri-search-line"></i>
       </div>
       <!-- Search container ends -->
+
+      <div class="dropdown d-inline-block">
+        <a class="dropdown-toggle header-icon position-relative" href="#!" role="button"
+          data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+          <i class="ri-notification-3-line"></i>
+          @if ($dentistUnreadActivityCount > 0)
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style="font-size: 10px; min-width: 18px;">{{ $dentistUnreadActivityCount }}</span>
+          @endif
+        </a>
+        <div class="dropdown-menu dropdown-menu-end dropdown-300 shadow-lg">
+          <h5 class="fw-semibold px-3 py-2 text-primary border-bottom mb-0">Notifications</h5>
+          <div class="scroll300">
+            <div class="p-2">
+              @forelse ($dentistActivityNotifications as $activityNotification)
+                <a href="{{ route('dentist.activity-notifications.open', $activityNotification->id) }}"
+                  class="d-block text-decoration-none text-reset rounded p-2 mb-1 {{ $activityNotification->read_at ? '' : 'bg-light' }}">
+                  <div class="fw-semibold small">{{ $activityNotification->data['title'] ?? 'Patient update' }}</div>
+                  <div class="small text-muted">{{ $activityNotification->data['message'] ?? '' }}</div>
+                  <div class="small text-muted mt-1">{{ $activityNotification->created_at->diffForHumans() }}</div>
+                </a>
+              @empty
+                <div class="text-center text-muted small py-4">No notifications yet.</div>
+              @endforelse
+            </div>
+          </div>
+          <div class="border-top p-2 text-center">
+            <a href="{{ route('dentist.activity-notifications.index') }}" class="small text-decoration-none">
+              View all notifications
+            </a>
+          </div>
+        </div>
+      </div>
 
       <!-- Header actions starts -->
       <div class="d-lg-flex d-none gap-2">

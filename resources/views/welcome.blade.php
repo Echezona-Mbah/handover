@@ -11,11 +11,18 @@
         <div class="container py-5">
             <div class="row justify-content-start">
                 <div class="col-lg-8 text-center text-lg-start">
-                    <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5" style="border-color: rgba(256, 256, 256, .3) !important;">Welcome To Fandova</h5>
-                    <h1 class="display-1 text-white mb-md-4">Best Healthcare Duty Fandova For Medical</h1>
-                    <div class="pt-2">
-                        <a href="register" class="btn btn-light rounded-pill py-md-3 px-md-5 mx-2">Register</a>
-                        <a href="login" class="btn btn-outline-light rounded-pill py-md-3 px-md-5 mx-2">Login</a>
+                    <div class="hero-copy">
+                        <span class="eyebrow"><i class="fa fa-heartbeat"></i> Better-connected care starts here</span>
+                        <h1 class="text-white mb-4">Every handover deserves clarity.</h1>
+                        <p class="hero-summary mb-4">Fandova helps healthcare teams share patient updates, coordinate care, and keep every shift moving with confidence.</p>
+                        <div class="d-flex flex-wrap gap-3 pt-2">
+                            <a href="{{ url('/contact') }}" class="btn btn-light text-primary">Get started with your team <i class="fa fa-arrow-right ms-2"></i></a>
+                            <a href="{{ url('/about') }}" class="btn btn-outline-light">Discover Fandova</a>
+                        </div>
+                        <div class="hero-proof mt-4">
+                            <span><i class="fa fa-check-circle me-2"></i>Structured patient handovers</span>
+                            <span><i class="fa fa-check-circle me-2"></i>Connected care teams</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -36,19 +43,15 @@
                <div class="col-lg-7">
                     <div class="mb-4">
                         <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">About Us</h5>
-                        <h1 class="display-4">Efficient Healthcare Duty Fandova for Medical Professionals</h1>
+                        <h1 class="display-4">A clearer way for care teams to work together</h1>
                     </div>
                     <p>
-                       At <b>Healthcare Fandova</b>, we are dedicated to transforming how hospitals, clinics, 
-                       and medical teams manage duty transitions. Our platform simplifies the <b>shift Fandova</b> 
-                       process by enabling doctors, nurses, and other healthcare professionals to communicate and collaborate effectively — anytime, anywhere.
+                       Fandova helps hospitals and clinics coordinate care transitions with a shared digital workspace for doctors, nurses, dentists, and other healthcare professionals.
                     </p>
                     <p>
-                        We understand that <b>patient safety and continuity   </b> of care depend on accurate and timely 
-                        communication between healthcare providers. That’s why our system is built to ensure every <b> detail — from 
-                        patient updates to treatment progress — is clearly documented and securely shared between </b> shifts.With real-time notifications, digital patient records, and structured Fandova templates, we help medical teams stay informed and reduce errors during critical transitions. Whether you’re handing over a ward, department, or individual patient, our platform ensures that the next team starts with complete clarity.
+                        Patient safety and continuity of care depend on timely, accurate communication. Structured handover notes, patient updates, and notifications help the next team understand what has happened and what needs attention.
                     
-                        Our goal is to make hospital operations smoother, safer, and more transparent — allowing medical staff to focus on what truly matters: delivering quality care.
+                        Our goal is to make everyday coordination clearer so healthcare professionals can focus on delivering quality care.
                     </p>
                     <div class="row g-3 pt-3">
                         <div class="col-sm-3 col-6">
@@ -89,9 +92,9 @@
     <div class="container">
         <div class="text-center mx-auto mb-5" style="max-width: 600px;">
             <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Our Services</h5>
-            <h1 class="display-4">Streamlined Healthcare Fandova & Patient Care Solutions</h1>
+            <h1 class="display-4">Tools that keep care coordinated</h1>
             <p class="text-muted mt-3">
-                Empowering doctors and nurses with efficient tools for seamless shift transitions, 
+                Helping doctors and nurses with practical tools for seamless shift transitions,
                 clear communication, and improved patient outcomes.
             </p>
         </div>
@@ -104,7 +107,7 @@
                     </div>
                     <h4 class="mb-3">Patient Diagnosis</h4>
                     <p class="m-0">Record and share diagnostic updates effortlessly across shifts to ensure every healthcare provider is fully informed on each patient’s condition.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/service') }}" aria-label="Learn about patient diagnosis"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -115,7 +118,7 @@
                     </div>
                     <h4 class="mb-3">Treatment Coordination</h4>
                     <p class="m-0">Easily create, update, and monitor treatment plans for each patient, ensuring consistency of care between doctors and nursing teams.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/service') }}" aria-label="Learn about treatment coordination"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -126,7 +129,7 @@
                     </div>
                     <h4 class="mb-3">Ward & Bed Management</h4>
                     <p class="m-0">Monitor real-time ward assignments and bed occupancy, reducing confusion and improving patient allocation efficiency.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/service') }}" aria-label="Learn about ward management"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -137,7 +140,7 @@
                     </div>
                     <h4 class="mb-3">Critical Alerts</h4>
                     <p class="m-0">Set up automated notifications for emergencies, pending procedures, and urgent cases to ensure rapid medical response.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/service') }}" aria-label="Learn about critical alerts"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -148,7 +151,7 @@
                     </div>
                     <h4 class="mb-3">Medication Management</h4>
                     <p class="m-0">Log prescriptions, track medication schedules, and minimize errors through accurate record-keeping and real-time updates.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/service') }}" aria-label="Learn about medication management"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -158,8 +161,8 @@
                         <i class="fa fa-2x fa-microscope text-white"></i>
                     </div>
                     <h4 class="mb-3">Lab & Diagnostic Reports</h4>
-                    <p class="m-0">Access and share lab results, imaging reports, and other test outcomes instantly to aid quick, informed decision-making during Fandovas.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <p class="m-0">Keep important diagnostic updates available to the right care team to support informed decisions across shifts.</p>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/service') }}" aria-label="Learn about diagnostic reports"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </div>
@@ -181,8 +184,8 @@
                         <h1 class="display-4">Make An Appointment For Your Family</h1>
                     </div>
                     <p class="text-white mb-5">Eirmod sed tempor lorem ut dolores. Aliquyam sit sadipscing kasd ipsum. Dolor ea et dolore et at sea ea at dolor, justo ipsum duo rebum sea invidunt voluptua. Eos vero eos vero ea et dolore eirmod et. Dolores diam duo invidunt lorem. Elitr ut dolores magna sit. Sea dolore sanctus sed et. Takimata takimata sanctus sed.</p>
-                    <a class="btn btn-dark rounded-pill py-3 px-5 me-3" href="">Find Doctor</a>
-                    <a class="btn btn-outline-dark rounded-pill py-3 px-5" href="">Read More</a>
+                    <a class="btn btn-dark rounded-pill py-3 px-5 me-3" href="{{ url('/appointment') }}">Plan a visit</a>
+                    <a class="btn btn-outline-dark rounded-pill py-3 px-5" href="{{ url('/about') }}">Learn more</a>
                 </div>
                 <div class="col-lg-6">
                     <div class="bg-white text-center rounded p-5">
@@ -330,10 +333,10 @@
     <div class="container">
         <div class="text-center mx-auto mb-5" style="max-width: 600px;">
             <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Our Medical Team</h5>
-            <h1 class="display-4">Dedicated & Experienced Healthcare Professionals</h1>
+            <h1 class="display-4">People working together for better care</h1>
             <p class="text-muted mt-3">
                 Meet our team of skilled doctors and specialists who work hand in hand to deliver 
-                exceptional patient care, efficient Fandovas, and life-saving treatment every day.
+                patient care, clear communication, and thoughtful treatment every day.
             </p>
         </div>
 
@@ -401,7 +404,7 @@
                             <p class="m-0">
                                 A leading neurologist with extensive experience in brain and nervous system disorders, 
                                 Dr. Alabi combines advanced clinical knowledge with empathy to provide exceptional care 
-                                and ensure accurate communication during patient Fandovas.
+                                and ensure accurate communication during patient handovers.
                             </p>
                         </div>
                         <div class="d-flex mt-auto border-top p-4">
@@ -426,7 +429,7 @@
                             <p class="m-0">
                                 Known for her quick thinking and calm presence, Dr. Nwosu leads emergency response teams 
                                 with precision and care. Her goal is to improve coordination between doctors and nurses 
-                                during critical Fandova situations.
+                                during critical patient handovers.
                             </p>
                         </div>
                         <div class="d-flex mt-auto border-top p-4">
@@ -450,19 +453,13 @@
         <div class="container py-5">
             <div class="text-center mx-auto mb-5" style="max-width: 500px;">
                 <h5 class="d-inline-block text-white text-uppercase border-bottom border-5">Find A Doctor</h5>
-                <h1 class="display-4 mb-4">Find A Healthcare Professionals</h1>
-                <h5 class="text-white fw-normal">Duo ipsum erat stet dolor sea ut nonumy tempor. Tempor duo lorem eos sit sed ipsum takimata ipsum sit est. Ipsum ea voluptua ipsum sit justo</h5>
+                <h1 class="display-4 mb-4">The right care starts with the right team</h1>
+                <h5 class="text-white fw-normal">Explore our services and connect with a healthcare team that can support your needs.</h5>
             </div>
             <div class="mx-auto" style="width: 100%; max-width: 600px;">
                 <div class="input-group">
-                    <select class="form-select border-primary w-25" style="height: 60px;">
-                        <option selected>Department</option>
-                        <option value="1">Department 1</option>
-                        <option value="2">Department 2</option>
-                        <option value="3">Department 3</option>
-                    </select>
-                    <input type="text" class="form-control border-primary w-50" placeholder="Keyword">
-                    <button class="btn btn-dark border-0 w-25">Search</button>
+                    <a href="{{ url('/service') }}" class="btn btn-light px-4 py-3">Explore care services</a>
+                    <a href="{{ url('/appointment') }}" class="btn btn-dark px-4 py-3">Plan a visit</a>
                 </div>
             </div>
         </div>
@@ -489,7 +486,7 @@
                                 </div>
                             </div>
                             <p class="fs-4 fw-normal">
-                                This Fandova system has transformed the way we transfer patient care during shifts. It’s clear, efficient, and keeps everyone informed in real time.
+                                Structured handovers make it easier for our team to pass on important updates and stay aligned throughout a shift.
                             </p>
                             <hr class="w-25 mx-auto">
                             <h3>Dr. Aisha Bello</h3>
@@ -505,7 +502,7 @@
                                 </div>
                             </div>
                             <p class="fs-4 fw-normal">
-                                As a hospital IT officer, I’ve implemented several platforms, but this one stands out. It's user-friendly, secure, and tailored for Nigerian healthcare.
+                                The platform is straightforward for our team to use and helps us keep important care information in one place.
                             </p>
                             <hr class="w-25 mx-auto">
                             <h3>Mr. Chinedu Okeke</h3>
@@ -521,7 +518,7 @@
                                 </div>
                             </div>
                             <p class="fs-4 fw-normal">
-                                Communication among nurses and doctors is now much smoother. We no longer miss key patient details during Fandova. Highly recommended!
+                                Communication between nurses and doctors is smoother, and the next shift has a clearer view of patient priorities.
                             </p>
                             <hr class="w-25 mx-auto">
                             <h3>Nurse Grace Umeh</h3>
@@ -541,15 +538,15 @@
         <div class="container">
             <div class="text-center mx-auto mb-5" style="max-width: 500px;">
                 <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Blog Post</h5>
-                <h1 class="display-4">Latest Updates on Medical Duty Fandova</h1>
+                <h1 class="display-4">Ideas for safer, more connected care</h1>
             </div>
             <div class="row g-5">
                 <div class="col-xl-4 col-lg-6">
                     <div class="bg-light rounded overflow-hidden">
                         <img class="img-fluid w-100" src="img/medium.jpg" alt="">
                         <div class="p-4">
-                            <a class="h3 d-block mb-3" href="">Streamlining Night Shifts with Digital Fandova Tools</a>
-                            <p class="m-0">Discover how hospitals in Nigeria are adopting digital platforms to improve communication between outgoing and incoming medical teams.</p>
+                            <a class="h3 d-block mb-3" href="{{ url('/blog-detail') }}">Making shift handovers clearer with digital tools</a>
+                            <p class="m-0">Explore practical ways care teams can improve communication between outgoing and incoming staff.</p>
                         </div>
                         <div class="d-flex justify-content-between border-top p-4">
                             <div class="d-flex align-items-center">
@@ -567,8 +564,8 @@
                     <div class="bg-light rounded overflow-hidden">
                         <img class="img-fluid w-100" src="img/african-american-man-woman-talking-girl-hospital-ward-about-healing-treatment-diagnosis-doctors-examining-sick-young-patient-with-cervical-neck-collar-sitting-bed.jpg" alt="">
                         <div class="p-4">
-                            <a class="h3 d-block mb-3" href="">5 Mistakes to Avoid During Shift Fandova</a>
-                            <p class="m-0">Proper duty transfer saves lives. Learn the most common Fandova errors and how to avoid them in busy Nigerian hospitals.</p>
+                            <a class="h3 d-block mb-3" href="{{ url('/blog-detail') }}">Five details to include in every handover</a>
+                            <p class="m-0">A simple checklist can help keep important patient information from getting lost between shifts.</p>
                         </div>
                         <div class="d-flex justify-content-between border-top p-4">
                             <div class="d-flex align-items-center">
@@ -586,8 +583,8 @@
                     <div class="bg-light rounded overflow-hidden">
                         <img class="img-fluid w-100" src="img/smiling.jpg" alt="">
                         <div class="p-4">
-                            <a class="h3 d-block mb-3" href="">How Technology is Reducing Errors in Patient Fandova</a>
-                            <p class="m-0">Explore how mobile Fandova apps are helping doctors and nurses stay updated, organized, and accountable.</p>
+                            <a class="h3 d-block mb-3" href="{{ url('/blog-detail') }}">How connected teams support continuity of care</a>
+                            <p class="m-0">See how shared updates help clinicians stay informed, organised, and ready to act.</p>
                         </div>
                         <div class="d-flex justify-content-between border-top p-4">
                             <div class="d-flex align-items-center">
@@ -605,6 +602,9 @@
         </div>
     </div>
  
+    <div class="container text-center mt-n4 mb-5">
+        <a href="{{ url('/blog') }}" class="btn btn-primary px-5 py-3">Explore health insights <i class="fa fa-arrow-right ms-2"></i></a>
+    </div>
     <!-- Blog End -->
     
 

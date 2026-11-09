@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <title>MEDINOVA - Hospital Website Template</title>
+    <title>Fandova | Connected care, clearer handovers</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Free HTML Templates" name="keywords">
-    <meta content="Free HTML Templates" name="description">
+    <meta content="Healthcare, patient handover, hospital coordination, Fandova" name="keywords">
+    <meta content="Fandova helps healthcare teams keep patient care coordinated through clearer handovers, shared updates, and connected clinical teams." name="description">
 
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
@@ -28,4 +28,5 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+    <link href="{{ asset('css/onboarding.css') }}" rel="stylesheet">
 </head>

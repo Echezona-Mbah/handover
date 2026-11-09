@@ -30,22 +30,22 @@
                   @csrf
                   <div class="row gx-3">
                     <div class="col-md-6 mb-3">
-                      <label for="full_name" class="form-label">Full name <span class="text-danger">*</span></label>
-                      <input id="full_name" name="full_name" type="text" required maxlength="255"
+                      <label for="full_name" class="form-label">Full name</label>
+                      <input id="full_name" name="full_name" type="text" maxlength="255"
                         value="{{ old('full_name') }}" class="form-control @error('full_name') is-invalid @enderror">
                       @error('full_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="col-md-6 mb-3">
-                      <label for="dob" class="form-label">Date of birth <span class="text-danger">*</span></label>
-                      <input id="dob" name="dob" type="date" required max="{{ now()->toDateString() }}"
+                      <label for="dob" class="form-label">Date of birth</label>
+                      <input id="dob" name="dob" type="date" max="{{ now()->toDateString() }}"
                         value="{{ old('dob') }}" class="form-control @error('dob') is-invalid @enderror">
                       @error('dob') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="col-md-6 mb-3">
-                      <label for="gender" class="form-label">Gender <span class="text-danger">*</span></label>
-                      <select id="gender" name="gender" required class="form-select @error('gender') is-invalid @enderror">
+                      <label for="gender" class="form-label">Gender</label>
+                      <select id="gender" name="gender" class="form-select @error('gender') is-invalid @enderror">
                         <option value="">Select gender</option>
                         <option value="female" @selected(old('gender') === 'female')>Female</option>
                         <option value="male" @selected(old('gender') === 'male')>Male</option>
@@ -54,15 +54,15 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                      <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                      <input id="email" name="email" type="email" required maxlength="255"
+                      <label for="email" class="form-label">Email</label>
+                      <input id="email" name="email" type="email" maxlength="255"
                         value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror">
                       @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="col-md-6 mb-3">
-                      <label for="mobile_number" class="form-label">Mobile number <span class="text-danger">*</span></label>
-                      <input id="mobile_number" name="mobile_number" type="tel" required maxlength="15"
+                      <label for="mobile_number" class="form-label">Mobile number</label>
+                      <input id="mobile_number" name="mobile_number" type="tel" maxlength="15"
                         value="{{ old('mobile_number') }}" class="form-control @error('mobile_number') is-invalid @enderror">
                       @error('mobile_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>

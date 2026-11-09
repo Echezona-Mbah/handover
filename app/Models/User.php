@@ -24,6 +24,8 @@ class User extends Authenticatable
         'password',
         'hospital_id',
         'doctor_department_id',
+        'nursing_admin_role',
+        'nursing_hierarchy_role',
         'profile_picture',
     ];
 
@@ -88,6 +90,11 @@ public function isSuperAdmin(): bool
 {
     return (bool) $this->is_super_admin;
 }
+
+    public function assignedNursingReports()
+    {
+        return $this->hasMany(NursingReport::class, 'assigned_admin_id');
+    }
 
     protected $table ='users';
     protected $primaryKey ='id';

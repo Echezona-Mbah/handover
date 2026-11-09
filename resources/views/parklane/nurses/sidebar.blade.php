@@ -95,7 +95,9 @@
   </a>
   <ul class="treeview-menu">
     <li><a href="{{ route('nurse.reports.index') }}">Nursing Reports</a></li>
-    <li><a href="{{ route('nurse.statistics.index') }}">Nursing Statistics</a></li>
+            <li><a href="{{ route('nurse.queries.index') }}">Nursing Queries</a></li>
+            <li><a href="{{ route('nurse.queries.create') }}">Send a Query</a></li>
+            <li><a href="{{ route('nurse.statistics.index') }}">Nursing Statistics</a></li>
     <li><a href="{{ route('nurse.rosters.index') }}">Duty Rosters</a></li>
   </ul>
 </li>

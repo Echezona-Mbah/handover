@@ -1,263 +1,118 @@
 @include('parklane.dentist.head')
-  <style>
-    #dropzone {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-    border: 2px dashed #007bff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-}
 
-#dropzone:hover {
-    border-color: #0056b3;
-    background-color: #e9ecef;
-}
+<div class="page-wrapper">
+  @include('parklane.dentist.header')
 
-.dz-message {
-    color: #495057;
-}
+  <div class="main-container">
+    @include('parklane.dentist.sidebar')
 
-.dz-button {
-    font-size: 16px;
-    padding: 12px 30px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.dz-button:hover {
-    background-color: #0056b3;
-}
-
-h5 {
-    font-size: 16px;
-    font-weight: normal;
-    margin-top: 20px;
-}
-
-@media (max-width: 576px) {
-    #dropzone {
-        padding: 20px;
-    }
-
-    .dz-button {
-        font-size: 14px;
-        padding: 10px 25px;
-    }
-
-    h5 {
-        font-size: 14px;
-    }
-}
-
-.form-select, .form-control {
-    font-size: 1rem;
-    padding: 0.75rem;
-    border-radius: 0.375rem;
-    border: 1px solid #ced4da;
-    transition: all 0.3s ease-in-out;
-}
-
-.form-select:focus, .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
-}
-
-.form-label {
-    font-weight: 600;
-    font-size: 1rem;
-    color: #495057;
-}
-
-.mb-3 {
-    margin-bottom: 1rem;
-}
-
-
-  </style>
-  
-    <!-- Page wrapper starts -->
-    <div class="page-wrapper">
-
-      <!-- App header starts -->
-      @include('parklane.dentist.header')
-      <!-- App header ends -->
-
-      <!-- Main container starts -->
-      <div class="main-container">
-
-        <!-- Sidebar wrapper starts -->
-        @include('parklane.dentist.sidebar')
-
-        <!-- Sidebar wrapper ends -->
-
-        <!-- App container starts -->
-        <div class="app-container">
-
-          <!-- App hero header starts -->
-          <div class="app-hero-header d-flex align-items-center">
-
-            <!-- Breadcrumb starts -->
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item">
-                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
-                <a href="index.html">Home</a>
-              </li>
-              <li class="breadcrumb-item text-primary" aria-current="page">
-                Dashboard
-              </li>
-            </ol>
-            <!-- Breadcrumb ends -->
-
-            <!-- Sales stats starts -->
-            {{-- <div class="ms-auto d-lg-flex d-none flex-row">
-              <div class="d-flex flex-row gap-1 day-sorting">
-                <button class="btn btn-sm btn-primary">Today</button>
-                <button class="btn btn-sm">7d</button>
-                <button class="btn btn-sm">2w</button>
-                <button class="btn btn-sm">1m</button>
-                <button class="btn btn-sm">3m</button>
-                <button class="btn btn-sm">6m</button>
-                <button class="btn btn-sm">1y</button>
-              </div>
-            </div> --}}
-            <!-- Sales stats ends -->
-
-          </div>
-
-                    <!-- App body starts -->
-                              <!-- App body starts -->
-                              <div class="app-body">
-
-                                <!-- Row starts -->
-                                <div class="row gx-3">
-                                  <div class="col-sm-12">
-                                    <div class="card">
-                                      <div class="card-header">
-                                        <h5 class="card-title">Medication Plan</h5>
-                                      </div>
-                                      <div id="toast-container"></div>
-
-                                      <div class="card-body">
-                    
-                                      <form action="{{ route('medications.store') }}" method="POST">
-                                        @csrf
-
-                                        <input type="hidden" name="patient_id" value="{{ $patient->id }}">
-
-                                        <!-- Row starts -->
-                                        <div class="row gx-3">
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="a1">Medication Name<span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="a1" name="medication" placeholder="Enter Medication Name" value="{{ old('medication') }}" >
-                                            </div>
-                                          </div>
-                                          
-
-                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                              <div class="mb-3">
-                                                  <label class="form-label" for="a1">Dosage<span class="text-danger">*</span></label>
-                                                  <input type="text" class="form-control" id="a1" name="dosage" placeholder="Enter Dosage" value="{{ old('dosage') }}" >
-                                              </div>
-                                            </div>
-                                            
-
-                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                              <div class="mb-3">
-                                                  <label class="form-label" for="a1">Frequency<span class="text-danger">*</span></label>
-                                                  <input type="text" class="form-control" id="a1" name="frequency" placeholder="Enter frequency  e.g.,Every 8 hours " value="{{ old('frequency') }}" >
-                                              </div>
-                                            </div>
-
-                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                              <div class="mb-3">
-                                                  <label class="form-label" for="a1">Start Date<span class="text-danger">*</span></label>
-                                                  <input type="date" class="form-control" id="a1" name="start_date" placeholder="Enter Start Date" value="{{ old('start_date') }}" >
-                                              </div>
-                                            </div>
-
-                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                              <div class="mb-3">
-                                                  <label class="form-label" for="a1">End Date<span class="text-danger">*</span></label>
-                                                  <input type="date" class="form-control" id="a1" name="end_date" placeholder="Enter End Date" value="{{ old('end_date') }}" >
-                                              </div>
-                                            </div>
-
-                                            <div class="col-sm-12">
-                                                <div class="mb-3">
-                                                  <label class="form-label" for="a9">instructions</label>
-                                                  <textarea class="form-control" id="a9" name="instructions" placeholder="Medical instructions" rows="3">{{ old('instructions') }}</textarea>
-
-                                                </div>
-                                              </div>
-
-
-
- 
-                                        
-                                          
-
-                                          {{-- <div class="col-sm-12">
-                                            <div id="dropzone" class="mb-4">
-                                              <form action="https://bootstrapget.com/upload" class="dropzone dz-clickable" id="demo-upload">
-                                                <div class="dz-message text-center">
-                                                  <button type="button" class="dz-button btn btn-outline-primary">
-                                                    Click here to upload or Drag & Drop your reports here.
-                                                  </button>
-                                                  <h5 class="mt-3 text-muted">Upload your health reports securely</h5>
-                                                </div>
-                                              </form>
-                                            </div>
-                                          </div> --}}
-                                          
-
-                                          <div class="col-sm-12">
-                                            <div class="d-flex gap-2 justify-content-end">
-                                              <a href="" type="button" class="btn btn-outline-secondary">
-                                                Cancel
-                                              </a>
-                                              <button type="submit" class="btn btn-primary">Create Patient</button>
-                                              {{-- <a href="submit" type="button" class="btn btn-primary">
-                                                Create Patient
-                                              </a> --}}
-                                              
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <!-- Row ends -->
-                                      </form>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <!-- Row ends -->
-                    
-                              </div>
-          <!-- App body ends -->
-                      <!-- App body ends -->
-
-
-          
-          <!-- App footer starts -->
-          <div class="app-footer bg-white">
-            <span>©  2024</span>
-          </div>
-          <!-- App footer ends -->
-
-        </div>
-        <!-- App container ends -->
-
+    <div class="app-container">
+      <div class="app-hero-header d-flex align-items-center">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="{{ route('dentist.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ route('dentist.patient') }}">Patients</a></li>
+          <li class="breadcrumb-item"><a href="{{ route('dentist.show_patient', $patient) }}">{{ $patient->full_name }}</a></li>
+          <li class="breadcrumb-item text-primary" aria-current="page">Medication plan</li>
+        </ol>
       </div>
-      <!-- Main container ends -->
 
+      <div class="app-body">
+        @if ($errors->any())
+          <div class="alert alert-danger">
+            <strong>Please check the medication details.</strong>
+            <ul class="mb-0 mt-2">
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
+
+        <div class="card border-0 shadow-sm mb-3 overflow-hidden"
+          style="background: linear-gradient(120deg, #155eef 0%, #243b80 100%);">
+          <div class="card-body p-4 text-white d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+              <span class="small text-white-50">CARE PLAN</span>
+              <h2 class="text-white mb-1">Add medication</h2>
+              <p class="text-white-50 mb-0">{{ $patient->full_name }} · {{ $patient->pt_number ?: $patient->patient_number }}</p>
+            </div>
+            <a href="{{ route('dentist.show_patient', $patient) }}" class="btn btn-light text-primary">
+              <i class="ri-user-heart-line me-1"></i> Patient record
+            </a>
+          </div>
+        </div>
+
+        @if ($patient->allergies)
+          <div class="alert alert-warning d-flex gap-2 align-items-start">
+            <i class="ri-alert-line fs-5"></i>
+            <div><strong>Recorded allergies:</strong> {{ $patient->allergies }}</div>
+          </div>
+        @endif
+
+        <form method="POST" action="{{ route('medications.store') }}">
+          @csrf
+          <input type="hidden" name="patient_id" value="{{ $patient->id }}">
+
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white">
+              <h5 class="card-title mb-1">Prescription details</h5>
+              <span class="small text-muted">Add the medication and directions to the patient’s care plan.</span>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="medication" class="form-label">Medication <span class="text-danger">*</span></label>
+                  <input id="medication" name="medication" type="text" maxlength="255" required
+                    value="{{ old('medication') }}" placeholder="Medication name"
+                    class="form-control @error('medication') is-invalid @enderror">
+                  @error('medication') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-6">
+                  <label for="dosage" class="form-label">Dosage <span class="text-danger">*</span></label>
+                  <input id="dosage" name="dosage" type="text" maxlength="255" required
+                    value="{{ old('dosage') }}" placeholder="e.g. 500 mg"
+                    class="form-control @error('dosage') is-invalid @enderror">
+                  @error('dosage') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-4">
+                  <label for="frequency" class="form-label">Frequency <span class="text-danger">*</span></label>
+                  <input id="frequency" name="frequency" type="text" maxlength="255" required
+                    value="{{ old('frequency') }}" placeholder="e.g. Every 8 hours"
+                    class="form-control @error('frequency') is-invalid @enderror">
+                  @error('frequency') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-4">
+                  <label for="start_date" class="form-label">Start date <span class="text-danger">*</span></label>
+                  <input id="start_date" name="start_date" type="date" required value="{{ old('start_date') }}"
+                    class="form-control @error('start_date') is-invalid @enderror">
+                  @error('start_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-4">
+                  <label for="end_date" class="form-label">End date <span class="text-danger">*</span></label>
+                  <input id="end_date" name="end_date" type="date" required value="{{ old('end_date') }}"
+                    class="form-control @error('end_date') is-invalid @enderror">
+                  @error('end_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-12">
+                  <label for="instructions" class="form-label">Instructions</label>
+                  <textarea id="instructions" name="instructions" rows="4" placeholder="Additional directions or precautions"
+                    class="form-control @error('instructions') is-invalid @enderror">{{ old('instructions') }}</textarea>
+                  @error('instructions') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end flex-wrap gap-2 mb-4">
+            <a href="{{ route('dentist.show_patient', $patient) }}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary"><i class="ri-save-line me-1"></i> Save medication plan</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="app-footer bg-white"><span>© {{ now()->year }} Fandova</span></div>
     </div>
-    <!-- Page wrapper ends -->
+  </div>
+</div>
 
-    
-    
 @include('parklane.dentist.script')

@@ -71,8 +71,6 @@ class NurseController extends Controller
             'address' => $request->address,
             'city' => $request->city,
             'state' => $request->state,
-            'ward_id'=> $request->ward_id,
-            'nurse_department_id'=> $request->nurse_department_id,
 
         ]);
     

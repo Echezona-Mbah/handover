@@ -321,11 +321,9 @@
             <a href="{{ route('nurse.profile') }}" class="small text-primary d-inline-block mt-1">Manage profile</a>
           </div>
           <div class="mx-3 my-2 d-grid">
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('nurse.logout') }}">
                 @csrf
-                <a href="{{ route('logout') }}"
-                  onclick="event.preventDefault(); this.closest('form').submit();" 
-                  class="btn btn-danger">Logout</a>
+                <button type="submit" class="btn btn-danger">Logout</button>
             </form>
 
           </div>

@@ -1,274 +1,193 @@
 @include('parklane.dentist.head')
-  <!-- Loading starts -->
-    {{-- <div id="loading-wrapper">
-      <div class='spin-wrapper'>
-        <div class='spin'>
-          <div class='inner'></div>
-        </div>
-        <div class='spin'>
-          <div class='inner'></div>
-        </div>
-        <div class='spin'>
-          <div class='inner'></div>
-        </div>
-        <div class='spin'>
-          <div class='inner'></div>
-        </div>
-        <div class='spin'>
-          <div class='inner'></div>
-        </div>
-        <div class='spin'>
-          <div class='inner'></div>
-        </div>
+
+<div class="page-wrapper">
+  @include('parklane.dentist.header')
+
+  <div class="main-container">
+    @include('parklane.dentist.sidebar')
+
+    <div class="app-container">
+      <div class="app-hero-header d-flex align-items-center">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="{{ route('dentist.dashboard') }}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ route('dentist.patient') }}">Patients</a></li>
+          <li class="breadcrumb-item text-primary" aria-current="page">Add patient</li>
+        </ol>
       </div>
-    </div> --}}
-    <!-- Loading ends -->
-  
-    <!-- Page wrapper starts -->
-    <div class="page-wrapper">
 
-      <!-- App header starts -->
-      @include('parklane.dentist.header')
-      <!-- App header ends -->
+      <div class="app-body">
+        @if (session('success'))
+          <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if ($errors->any())
+          <div class="alert alert-danger">
+            <strong>Please check the form.</strong>
+            <ul class="mb-0 mt-2">
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
 
-      <!-- Main container starts -->
-      <div class="main-container">
+        @if ($wards->isEmpty())
+          <div class="alert alert-warning">There are no wards configured for your hospital. Contact your administrator before adding a patient.</div>
+        @endif
+        @if ($DentistUnits->isEmpty())
+          <div class="alert alert-warning">There are no dental units configured for your hospital. Contact your administrator before adding a patient.</div>
+        @endif
 
-        <!-- Sidebar wrapper starts -->
-        @include('parklane.dentist.sidebar')
+        <div class="card border-0 shadow-sm mb-3 overflow-hidden"
+          style="background: linear-gradient(120deg, #155eef 0%, #243b80 100%);">
+          <div class="card-body p-4 text-white">
+            <span class="small text-white-50">PATIENT INTAKE</span>
+            <h2 class="text-white mb-1">Register a patient</h2>
+            <p class="text-white-50 mb-0">Patient and record numbers are generated automatically.</p>
+          </div>
+        </div>
 
-        <!-- Sidebar wrapper ends -->
-
-        <!-- App container starts -->
-        <div class="app-container">
-
-          <!-- App hero header starts -->
-          <div class="app-hero-header d-flex align-items-center">
-
-            <!-- Breadcrumb starts -->
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item">
-                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
-                <a href="index.html">Home</a>
-              </li>
-              <li class="breadcrumb-item text-primary" aria-current="page">
-                Dashboard
-              </li>
-            </ol>
-            <!-- Breadcrumb ends -->
-
-            <!-- Sales stats starts -->
-            {{-- <div class="ms-auto d-lg-flex d-none flex-row">
-              <div class="d-flex flex-row gap-1 day-sorting">
-                <button class="btn btn-sm btn-primary">Today</button>
-                <button class="btn btn-sm">7d</button>
-                <button class="btn btn-sm">2w</button>
-                <button class="btn btn-sm">1m</button>
-                <button class="btn btn-sm">3m</button>
-                <button class="btn btn-sm">6m</button>
-                <button class="btn btn-sm">1y</button>
+        <form method="POST" action="{{ route('dentist.store_patient') }}">
+          @csrf
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white">
+              <h5 class="card-title mb-1">Patient information</h5>
+              <span class="small text-muted">Enter the patient’s identifying and contact details.</span>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="full_name" class="form-label">Full name</label>
+                  <input id="full_name" name="full_name" type="text" maxlength="255"
+                    value="{{ old('full_name') }}"
+                    class="form-control @error('full_name') is-invalid @enderror">
+                  @error('full_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-3">
+                  <label for="dob" class="form-label">Date of birth</label>
+                  <input id="dob" name="dob" type="date" max="{{ now()->toDateString() }}"
+                    value="{{ old('dob') }}" class="form-control @error('dob') is-invalid @enderror">
+                  @error('dob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-3">
+                  <label for="gender" class="form-label">Gender</label>
+                  <select id="gender" name="gender" class="form-select @error('gender') is-invalid @enderror">
+                    <option value="">Not specified</option>
+                    <option value="female" @selected(old('gender') === 'female')>Female</option>
+                    <option value="male" @selected(old('gender') === 'male')>Male</option>
+                  </select>
+                  @error('gender') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email</label>
+                  <input id="email" name="email" type="email" maxlength="255"
+                    value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror">
+                  @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-3">
+                  <label for="mobile_number" class="form-label">Mobile number</label>
+                  <input id="mobile_number" name="mobile_number" type="tel" maxlength="15"
+                    value="{{ old('mobile_number') }}" class="form-control @error('mobile_number') is-invalid @enderror">
+                  @error('mobile_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-3">
+                  <label for="marital_status" class="form-label">Marital status</label>
+                  <select id="marital_status" name="marital_status" class="form-select @error('marital_status') is-invalid @enderror">
+                    <option value="">Not specified</option>
+                    <option value="Married" @selected(old('marital_status') === 'Married')>Married</option>
+                    <option value="Single" @selected(old('marital_status') === 'Single')>Single</option>
+                  </select>
+                  @error('marital_status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-6">
+                  <label for="ward_id" class="form-label">Ward</label>
+                  <select id="ward_id" name="ward_id" class="form-select @error('ward_id') is-invalid @enderror">
+                    <option value="">Not assigned</option>
+                    @foreach ($wards as $ward)
+                      <option value="{{ $ward->id }}" @selected(old('ward_id') == $ward->id)>{{ $ward->name }}</option>
+                    @endforeach
+                  </select>
+                  @error('ward_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-6">
+                  <label for="dentist_unit_id" class="form-label">Dental unit</label>
+                  @if ($dentist->dentist_unit_id)
+                    @php($assignedUnit = $DentistUnits->firstWhere('id', $dentist->dentist_unit_id))
+                    <input type="hidden" name="dentist_unit_id" value="{{ $dentist->dentist_unit_id }}">
+                    <input id="dentist_unit_id" type="text" readonly
+                      value="{{ $assignedUnit?->name ?? 'Your assigned unit' }}" class="form-control">
+                  @else
+                    <select id="dentist_unit_id" name="dentist_unit_id"
+                      class="form-select @error('dentist_unit_id') is-invalid @enderror">
+                      <option value="">Not assigned</option>
+                      @foreach ($DentistUnits as $unit)
+                        <option value="{{ $unit->id }}" @selected(old('dentist_unit_id') == $unit->id)>{{ $unit->name }}</option>
+                      @endforeach
+                    </select>
+                    @error('dentist_unit_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                  @endif
+                </div>
               </div>
-            </div> --}}
-            <!-- Sales stats ends -->
-
+            </div>
           </div>
 
-                    <!-- App body starts -->
-                              <!-- App body starts -->
-                              <div class="app-body">
-
-                                <!-- Row starts -->
-                                <div class="row gx-3">
-                                  <div class="col-sm-12">
-                                    <div class="card">
-                                      <div class="card-header">
-                                        <h5 class="card-title">Add Patient Details</h5>
-                                      </div>
-                                      <div class="card-body">
-                    
-                                        <form action="{{ route('dentist.store_patient') }}" method="POST">
-                                                @csrf
-                                        <!-- Row starts -->
-                                        <div class="row gx-3">
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="a1">Full Name <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="a1" name="full_name" placeholder="Enter Full Name" value="{{ old('full_name') }}" >
-                                            </div>
-                                          </div>
-                                          {{-- <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                              <label class="form-label" for="a2">Last Name <span class="text-danger">*</span></label>
-                                              <input type="text" class="form-control" id="a2" placeholder="Enter Last Name">
-                                            </div>
-                                          </div> --}}
-
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="dob">Date of Birth <span class="text-danger">*</span></label>
-                                                <input type="date" class="form-control" id="dob" name="dob" value="{{ old('dob') }}" >
-                                            </div>
-                                          </div>
-                                        
-                                          
-
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="selectGender1">Gender <span class="text-danger">*</span></label>
-                                                <div class="m-0">
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="gender" id="selectGender1" value="male" {{ old('gender') == 'male' ? 'checked' : '' }}>
-                                                        <label class="form-check-label" for="selectGender1">Male</label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="gender" id="selectGender2" value="female" {{ old('gender') == 'female' ? 'checked' : '' }}>
-                                                        <label class="form-check-label" for="selectGender2">Female</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                            
-
-
-                                        <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                          <div class="mb-3">
-                                              <label class="form-label" for="a5">Email <span class="text-danger">*</span></label>
-                                              <input type="email" class="form-control" id="a5" name="email" placeholder="Enter Email ID" value="{{ old('email') }}" >
-                                          </div>
-                                        </div>
-
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                              <label class="form-label" for="a6">Mobile Number <span class="text-danger">*</span></label>
-                                              <input type="text" class="form-control" id="a6" name="mobile_number"  value="{{ old('mobile_number') }}" placeholder="Enter Mobile Number">
-                                            </div>
-                                          </div>
-
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                              <label class="form-label" for="a7">Marital Status</label>
-                                              <select class="form-select" id="a7"  name="marital_status" value="{{ old('marital_status') }}">
-                                                <option value="0">Select</option>
-                                                <option value="Married">Married</option>
-                                                <option value="unmarried">Un Married</option>
-                                              </select>
-                                            </div>
-                                          </div>
-
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                              <label class="form-label" for="a6">Current Condition <span class="text-danger">*</span></label>
-                                              <input type="text" class="form-control" id="a6" name="current_condition"  value="{{ old('current_condition') }}" placeholder="Enter Current Condition">
-                                            </div>
-                                          </div>
-
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="a6">Ward <span class="text-danger">*</span></label>
-                                                <select class="form-select" id="a6" name="ward" required>
-                                                    <option value="">-- Select Ward --</option>
-                                                    @foreach($wards as $ward)
-                                                        <option value="{{ $ward->id }}" {{ old('ward') == $ward->id ? 'selected' : '' }}>
-                                                            {{ $ward->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                         <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="a6">Ward <span class="text-danger">*</span></label>
-                                                <select class="form-select" id="a6" name="DentistUnit" required>
-                                                    <option value="">-- Select Ward --</option>
-                                                    @foreach($DentistUnits as $DentistUnit)
-                                                        <option value="{{ $DentistUnit->id }}" {{ old('DentistUnit') == $DentistUnit->id ? 'selected' : '' }}>
-                                                            {{ $DentistUnit->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-
-
-                                        
-
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                              <label class="form-label" for="a6">Current Medications <span class="text-danger">*</span></label>
-                                              <input type="text" class="form-control" id="a6" name="current_medications"  value="{{ old('current_medications') }}" placeholder="EnterCurrent Medications">
-                                            </div>
-                                          </div>
-
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                              <label class="form-label" for="a6">Allergies <span class="text-danger">*</span></label>
-                                              <input type="text" class="form-control" id="a6" name="allergies"  value="{{ old('allergies') }}" placeholder="Enter Allergies">
-                                            </div>
-                                          </div>
-
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                              <label class="form-label" for="a6">Urgency Status <span class="text-danger">*</span></label>
-                                              <input type="text" class="form-control" id="a6" name="urgency_status"  value="{{ old('urgency_status') }}" placeholder="Enter Urgency Status">
-                                            </div>
-                                          </div>
-
-                                          <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                              <label class="form-label" for="a12">Address</label>
-                                              <input type="text" class="form-control" name="address" value="{{ old('address') }}" id="a12" placeholder="Enter Address">
-                                            </div>
-                                          </div>
-
-
-
-                                          
-
-                                          <div class="col-sm-12">
-                                            <div class="d-flex gap-2 justify-content-end">
-                                              <a href="" type="button" class="btn btn-outline-secondary">
-                                                Cancel
-                                              </a>
-                                              <button type="submit" class="btn btn-primary">Create Patient</button>
-                                              {{-- <a href="submit" type="button" class="btn btn-primary">
-                                                Create Patient
-                                              </a> --}}
-                                              
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <!-- Row ends -->
-                                      </form>
-                    
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <!-- Row ends -->
-                    
-                              </div>
-          <!-- App body ends -->
-                      <!-- App body ends -->
-
-
-          
-          <!-- App footer starts -->
-          <div class="app-footer bg-white">
-            <span>©  2024</span>
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white">
+              <h5 class="card-title mb-1">Clinical details</h5>
+              <span class="small text-muted">Record the current concern and relevant care information.</span>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="current_condition" class="form-label">Current condition</label>
+                  <input id="current_condition" name="current_condition" type="text" maxlength="255"
+                    value="{{ old('current_condition') }}"
+                    class="form-control @error('current_condition') is-invalid @enderror">
+                  @error('current_condition') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-6">
+                  <label for="urgency_status" class="form-label">Urgency</label>
+                  <select id="urgency_status" name="urgency_status"
+                    class="form-select @error('urgency_status') is-invalid @enderror">
+                    <option value="routine" @selected(old('urgency_status', 'routine') === 'routine')>Routine</option>
+                    <option value="urgent" @selected(old('urgency_status') === 'urgent')>Urgent</option>
+                    <option value="emergency" @selected(old('urgency_status') === 'emergency')>Emergency</option>
+                  </select>
+                  @error('urgency_status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-6">
+                  <label for="current_medications" class="form-label">Current medications</label>
+                  <textarea id="current_medications" name="current_medications" rows="3" maxlength="1000"
+                    class="form-control @error('current_medications') is-invalid @enderror">{{ old('current_medications') }}</textarea>
+                  @error('current_medications') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-6">
+                  <label for="allergies" class="form-label">Allergies</label>
+                  <textarea id="allergies" name="allergies" rows="3" maxlength="1000"
+                    class="form-control @error('allergies') is-invalid @enderror">{{ old('allergies') }}</textarea>
+                  @error('allergies') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-12">
+                  <label for="address" class="form-label">Address</label>
+                  <textarea id="address" name="address" rows="2" maxlength="255"
+                    class="form-control @error('address') is-invalid @enderror">{{ old('address') }}</textarea>
+                  @error('address') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+              </div>
+            </div>
           </div>
-          <!-- App footer ends -->
 
-        </div>
-        <!-- App container ends -->
-
+          <div class="d-flex flex-wrap justify-content-end gap-2 mb-4">
+            <a href="{{ route('dentist.patient') }}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="ri-user-add-line me-1"></i> Register patient
+            </button>
+          </div>
+        </form>
       </div>
-      <!-- Main container ends -->
 
+      <div class="app-footer bg-white"><span>© {{ now()->year }} Fandova</span></div>
     </div>
-    <!-- Page wrapper ends -->
+  </div>
+</div>
 
-    
-    
 @include('parklane.dentist.script')

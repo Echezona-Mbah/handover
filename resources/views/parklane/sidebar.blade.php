@@ -14,12 +14,13 @@
       <ul class="sidebar-menu">
 
         <li class="active current-page">
-          <a href="{{ route('dashboard') }}">
+          <a href="{{ (auth()->user()->nursing_admin_role || auth()->user()->nursing_hierarchy_role) ? route('admin.nursing.dashboard') : route('dashboard') }}">
             <i class="ri-home-6-line"></i>
             <span class="menu-text">Dashboard</span>
           </a>
         </li>
 
+        @if(!auth()->user()->nursing_admin_role && !auth()->user()->nursing_hierarchy_role)
         {{-- Doctors: visible to everyone (super admin sees all, department manager sees only their own via controller scoping) --}}
         <li class="treeview">
           <a href="#!">
@@ -38,6 +39,7 @@
             </li>
           </ul>
         </li>
+        @endif
 
       @if(auth()->user()->is_super_admin)
         <li class="treeview">
@@ -76,19 +78,6 @@
               </li>
             </ul>
           </li>
-
-          <li class="treeview">
-        <a href="#!">
-          <i class="ri-nurse-line"></i>
-          <span class="menu-text">Nursing Digital</span>
-        </a>
-        <ul class="treeview-menu">
-          <li><a href="{{ route('admin.nursing.reports') }}">Reports Review</a></li>
-          <li><a href="{{ route('admin.nursing.statistics') }}">Statistics</a></li>
-          <li><a href="{{ route('admin.nursing.rosters') }}">Roster Approval</a></li>
-        </ul>
-      </li>
-
 
           <li class="treeview">
             <a href="#!">
@@ -150,6 +139,29 @@
             </ul>
           </li>
 
+        @endif
+
+        @if(auth()->user()->nursing_admin_role || auth()->user()->nursing_hierarchy_role || auth()->user()->is_super_admin)
+          <li class="treeview">
+            <a href="#!">
+              <i class="ri-nurse-line"></i>
+              <span class="menu-text">Nursing Digital</span>
+            </a>
+            <ul class="treeview-menu">
+              <li><a href="{{ route('admin.nursing.dashboard') }}">Nursing Dashboard</a></li>
+              <li><a href="{{ route('admin.nursing.reports') }}">Administration Reports</a></li>
+              @if(\App\Services\NursingHierarchy::canManageNursingDirectory(auth()->user()))
+                <li><a href="{{ route('admin.nursing.rosters') }}">Ward Duty Rosters</a></li>
+              @endif
+              @if(in_array(\App\Services\NursingHierarchy::role(auth()->user()), ['hns', 'control_162', 'unit_head'], true))
+                <li><a href="{{ route('admin.nursing.patients') }}">Ward Patients</a></li>
+                <li><a href="{{ route('admin.nursing.nurses') }}">Ward Nurses</a></li>
+              @endif
+              <li><a href="{{ route('nursing.queries.index') }}">Nursing Queries</a></li>
+              <li><a href="{{ route('nursing.queries.create') }}">Send a Query</a></li>
+              <li><a href="{{ route('admin.nursing.notifications.index') }}">Notifications @php($nursingUnread = auth()->user()->unreadNotifications()->where('type', \App\Notifications\NursingReportSubmitted::class)->count()) @if($nursingUnread)<span class="badge bg-danger ms-1">{{ $nursingUnread }}</span>@endif</a></li>
+            </ul>
+          </li>
         @endif
 
       </ul>

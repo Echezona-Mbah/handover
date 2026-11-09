@@ -90,6 +90,9 @@
                                 @if(session('success'))
                                   <div class="alert alert-success">{{ session('success') }}</div>
                                 @endif
+                                @if(session('error'))
+                                  <div class="alert alert-danger">{{ session('error') }}</div>
+                                @endif
 
                                 @if($errors->any())
                                   <div class="alert alert-danger">
@@ -131,12 +134,12 @@
                                             </div>
                                         </div>
 
-                                        <!-- Nurse Department -->
+                                        <!-- Nursing Unit -->
                                             <div class="col-xxl-3 col-lg-4 col-sm-6">
                                               <div class="mb-3">
-                                                  <label class="form-label">Nurse Department</label>
-                                                  <select name="nurse_department_id" class="form-select">
-                                                      <option value="">Select department (optional)</option>
+                                                  <label class="form-label" for="nurse_department_id">Nursing unit <span class="text-danger">*</span></label>
+                                                  <select name="nurse_department_id" id="nurse_department_id" class="form-select" required>
+                                                      <option value="">Select a unit</option>
                                                       @foreach($departments as $dept)
                                                           <option value="{{ $dept->id }}" @selected(old('nurse_department_id') == $dept->id)>{{ $dept->name }}</option>
                                                       @endforeach
@@ -147,16 +150,16 @@
                                             <!-- Ward -->
                                             <div class="col-xxl-3 col-lg-4 col-sm-6">
                                               <div class="mb-3">
-                                                  <label class="form-label">Assigned ward / clinic <span class="text-danger">*</span></label>
-                                                  <select name="ward_id" id="ward_id" class="form-select" required>
-                                                      <option value="">Select a ward, clinic, or theatre</option>
+                                                  <label class="form-label" for="ward_id">Ward / assignment <span class="text-danger">*</span></label>
+                                                  <select name="ward_id" id="ward_id" class="form-select" required disabled>
+                                                      <option value="">Select a unit first</option>
                                                       @foreach($wards as $ward)
-                                                          <option value="{{ $ward->id }}" data-linen-color="{{ $ward->linen_color }}" @selected(old('ward_id') == $ward->id)>
+                                                          <option value="{{ $ward->id }}" data-unit-id="{{ $ward->nurse_department_id }}" data-linen-color="{{ $ward->linen_color }}" @selected(old('ward_id') == $ward->id)>
                                                               {{ $ward->category }} — {{ $ward->name }}{{ $ward->linen_color ? ' · Linen: ' . $ward->linen_color : '' }}
                                                           </option>
                                                       @endforeach
                                                   </select>
-                                                  <small id="linen-color-hint" class="form-text text-muted">Choose an assignment to view its linen colour.</small>
+                                                  <small id="linen-color-hint" class="form-text text-muted">Choose a unit to see its wards and assignments.</small>
                                               </div>
                                             </div>
 
@@ -168,6 +171,16 @@
                                                       @foreach($nursingRoles as $nursingRole)
                                                           <option value="{{ $nursingRole->id }}" @selected(old('nursing_role_id') == $nursingRole->id)>{{ $nursingRole->name }}</option>
                                                       @endforeach
+                                                  </select>
+                                              </div>
+                                            </div>
+
+                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                              <div class="mb-3">
+                                                  <label class="form-label">Ward responsibility</label>
+                                                  <select name="nursing_hierarchy_role" class="form-select" required>
+                                                      <option value="ward_nurse" @selected(old('nursing_hierarchy_role', 'ward_nurse') === 'ward_nurse')>Ward nurse</option>
+                                                      <option value="ward_supervision" @selected(old('nursing_hierarchy_role') === 'ward_supervision')>Ward supervision</option>
                                                   </select>
                                               </div>
                                             </div>
@@ -204,30 +217,8 @@
                                         </div>
 
                                 
-                                        <!-- Password -->
-                                        <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="password">Password</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text">
-                                                        <i class="ri-lock-password-line"></i>
-                                                    </span>
-                                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                
-                                        <!-- Confirm Password -->
-                                        <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="confirm_password">Confirm Password</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text">
-                                                        <i class="ri-lock-password-line"></i>
-                                                    </span>
-                                            <input type="password" id="confirm_password" name="password_confirmation" placeholder="Confirm password" class="form-control" required>
-                                                </div>
-                                            </div>
+                                        <div class="col-12 mb-3">
+                                            <div class="alert alert-info mb-0">The nurse will receive their login email and a secure link to set up or reset their password.</div>
                                         </div>
                                     </div>
                                 
@@ -270,13 +261,31 @@
     
 @include('parklane.script')
 <script>
+  const departmentSelect = document.getElementById('nurse_department_id');
   const wardSelect = document.getElementById('ward_id');
   const linenHint = document.getElementById('linen-color-hint');
+  const wardOptions = Array.from(wardSelect.options).slice(1);
+  const filterWards = (resetSelection = true) => {
+    const unitId = departmentSelect.value;
+    const selectedWardId = resetSelection ? '' : wardSelect.value;
+    wardOptions.forEach((option) => {
+      const belongsToUnit = Boolean(unitId) && option.dataset.unitId === unitId;
+      option.hidden = !belongsToUnit;
+      option.disabled = !belongsToUnit;
+    });
+    wardSelect.value = selectedWardId;
+    wardSelect.disabled = !unitId;
+    const firstOption = wardSelect.options[0];
+    firstOption.textContent = unitId ? 'Select a ward or assignment' : 'Select a unit first';
+    showLinenColor();
+  };
   const showLinenColor = () => {
     const option = wardSelect.options[wardSelect.selectedIndex];
     const color = option?.dataset.linenColor;
-    linenHint.textContent = color ? `Linen colour for this assignment: ${color}` : 'No linen colour has been configured for this assignment.';
+    linenHint.textContent = color ? `Linen colour for this assignment: ${color}` : 'Choose a ward or assignment to view its linen colour.';
   };
+  departmentSelect?.addEventListener('change', filterWards);
   wardSelect?.addEventListener('change', showLinenColor);
+  filterWards(false);
   showLinenColor();
 </script>

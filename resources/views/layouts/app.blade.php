@@ -32,5 +32,6 @@
                 {{ $slot }}
             </main>
         </div>
+        @include('partials.password-visibility')
     </body>
 </html>

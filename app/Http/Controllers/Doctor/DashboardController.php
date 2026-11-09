@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Doctor;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
+use App\Models\DoctorAppointment;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,8 +40,17 @@ public function index()
     }
 
     $invitedUnitsCount = $invitedUnitsQuery->count();
+    $upcomingAppointmentsCount = DoctorAppointment::where('doctor_id', $doctor->id)
+        ->where('status', 'scheduled')
+        ->where('scheduled_at', '>=', now())
+        ->count();
 
-    return view('parklane.doctor.dashboard', compact('doctor', 'patientCount', 'invitedUnitsCount'));
+    return view('parklane.doctor.dashboard', compact(
+        'doctor',
+        'patientCount',
+        'invitedUnitsCount',
+        'upcomingAppointmentsCount'
+    ));
 }
 
     

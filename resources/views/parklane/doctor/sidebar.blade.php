@@ -63,6 +63,12 @@
             <span class="menu-text">Patients</span>
           </a>
         </li>
+        <li>
+          <a href="{{ route('doctor.appointments.index') }}">
+            <i class="ri-calendar-check-line"></i>
+            <span class="menu-text">Appointments & Follow-ups</span>
+          </a>
+        </li>
         {{-- <li class="treeview">
           <a href="#!">
             <i class="ri-heart-pulse-line"></i>

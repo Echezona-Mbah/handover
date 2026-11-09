@@ -1,51 +1,29 @@
 {{-- !-- Footer Start --> --}}
-    <div class="container-fluid bg-dark text-light mt-5 py-5">
+    <div class="container-fluid text-light mt-5 py-5 public-footer">
         <div class="container py-5">
             <div class="row g-5">
                 <div class="col-lg-3 col-md-6">
                     <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Get In Touch</h4>
-                    <p class="mb-4">        Have questions or need support? Our team is available 24/7 to assist hospitals and healthcare professionals with duty Fandova or account inquiries.</p>
-                    <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-3"></i>15 Medical Center Avenue, GRA, Enugu, Nigeria</p>
-                    <p class="mb-2"><i class="fa fa-envelope text-primary me-3"></i>info@Fandova.com</p>
-                    <p class="mb-0"><i class="fa fa-phone-alt text-primary me-3"></i>+234 345 67890</p>
+                    <p class="mb-4">Have questions about Fandova or need help getting your care team started? Get in touch with us.</p>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-3"></i>Enugu, Nigeria</p>
+                    <p class="mb-2"><i class="fa fa-envelope text-primary me-3"></i><a href="mailto:info@fandova.com">info@fandova.com</a></p>
+                    <p class="mb-0"><i class="fa fa-phone-alt text-primary me-3"></i><a href="tel:+23434567890">+234 345 67890</a></p>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Quick Links</h4>
                     <div class="d-flex flex-column justify-content-start">
-                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Home</a>
-                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>About Us</a>
-                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Our Services</a>
-                        {{-- <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Meet The Team</a>
-                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Latest Blog</a> --}}
-                        <a class="text-light" href="#"><i class="fa fa-angle-right me-2"></i>Contact Us</a>
+                        <a class="text-light mb-2" href="{{ url('/') }}"><i class="fa fa-angle-right me-2"></i>Home</a>
+                        <a class="text-light mb-2" href="{{ url('/about') }}"><i class="fa fa-angle-right me-2"></i>About</a>
+                        <a class="text-light mb-2" href="{{ url('/service') }}"><i class="fa fa-angle-right me-2"></i>Services</a>
+                        <a class="text-light mb-2" href="{{ url('/team') }}"><i class="fa fa-angle-right me-2"></i>Our team</a>
+                        <a class="text-light mb-2" href="{{ url('/blog') }}"><i class="fa fa-angle-right me-2"></i>Health insights</a>
+                        <a class="text-light" href="{{ url('/contact') }}"><i class="fa fa-angle-right me-2"></i>Contact</a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    {{-- <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Popular Links</h4> --}}
-                    {{-- <div class="d-flex flex-column justify-content-start">
-                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Home</a>
-                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>About Us</a>
-                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Our Services</a>
-                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Meet The Team</a>
-                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Latest Blog</a>
-                        <a class="text-light" href="#"><i class="fa fa-angle-right me-2"></i>Contact Us</a>
-                    </div> --}}
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Newsletter</h4>
-                    <form action="">
-                        <div class="input-group">
-                            <input type="text" class="form-control p-3 border-0" placeholder="Your Email Address">
-                            <button class="btn btn-primary">Sign Up</button>
-                        </div>
-                    </form>
-                    <h6 class="text-primary text-uppercase mt-4 mb-3">Follow Us</h6>
-                    <div class="d-flex">
-                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
+                    <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">For care teams</h4>
+                    <p class="text-white-50 mb-4">Keep handovers clear, patient updates connected, and teams aligned throughout every shift.</p>
+                    <a href="{{ url('/appointment') }}" class="btn btn-primary px-4 py-3">Get in touch</a>
                 </div>
             </div>
         </div>
@@ -54,10 +32,10 @@
         <div class="container">
             <div class="row g-5">
                 <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-md-0">&copy; <a class="text-primary" href="#">Your Site Name</a>. All Rights Reserved.</p>
+                    <p class="mb-md-0">&copy; {{ now()->year }} <a class="text-primary" href="{{ url('/') }}">Fandova</a>. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <p class="mb-0">Designed by <a class="text-primary" href="">Web Daveloper</a></p>
+                    <p class="mb-0">Supporting better-connected care.</p>
                 </div>
             </div>
         </div>
@@ -66,7 +44,7 @@
 
 
     <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    <a href="#top" class="btn btn-lg btn-primary btn-lg-square back-to-top" aria-label="Back to top"><i class="bi bi-arrow-up"></i></a>
 
 
     <!-- JavaScript Libraries -->

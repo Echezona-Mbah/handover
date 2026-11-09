@@ -156,12 +156,30 @@
                       </select>
                     </div>
                     <div class="mb-3">
+                      <label class="form-label">Nursing unit <span class="text-danger">*</span></label>
+                      <select name="nurse_department_id" class="form-select" required>
+                        <option value="">Select a unit</option>
+                        @foreach($nursingUnits as $nursingUnit)
+                          <option value="{{ $nursingUnit->id }}" @selected(old('nurse_department_id') == $nursingUnit->id)>{{ $nursingUnit->name }}</option>
+                        @endforeach
+                      </select>
+                    </div>
+                    <div class="mb-3">
                       <label class="form-label">Linen colour</label>
                       <input type="text" name="linen_color" class="form-control" placeholder="e.g. Sea Green or Pink / Blue" value="{{ old('linen_color') }}">
                     </div>
                     <div class="mb-3">
                       <label class="form-label">Description</label>
                       <textarea name="description" class="form-control" rows="2" placeholder="Optional description">{{ old('description') }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Nursing unit head</label>
+                      <select name="unit_head_id" class="form-select">
+                        <option value="">Not assigned</option>
+                        @foreach($unitHeads as $unitHead)
+                          <option value="{{ $unitHead->id }}" @selected((string) old('unit_head_id') === (string) $unitHead->id)>{{ $unitHead->name }}</option>
+                        @endforeach
+                      </select>
                     </div>
                     <button type="submit" class="btn btn-danger w-100">
                       <i class="ri-add-line me-1"></i> Add Ward
@@ -375,6 +393,7 @@
                         <tr>
                           <th>#</th>
                           <th>Assignment</th>
+                          <th>Nursing unit</th>
                           <th>Linen colour</th>
                           <th>Description</th>
                           <th class="text-center">Actions</th>
@@ -382,9 +401,10 @@
                       </thead>
                       <tbody>
                         @forelse($wards as $ward)
-                          <tr data-search="{{ strtolower($ward->name . ' ' . $ward->category . ' ' . $ward->linen_color . ' ' . ($ward->description ?? '')) }}">
+                          <tr data-search="{{ strtolower($ward->name . ' ' . $ward->category . ' ' . $ward->linen_color . ' ' . ($ward->nurseDepartment?->name ?? '') . ' ' . ($ward->description ?? '')) }}">
                             <td>{{ $loop->iteration }}</td>
                             <td><strong>{{ $ward->name }}</strong><br><small class="text-muted">{{ $ward->category }}</small></td>
+                            <td>{{ $ward->nurseDepartment?->name ?? '—' }}</td>
                             <td>{{ $ward->linen_color ?? '—' }}</td>
                             <td class="text-muted small">{{ $ward->description ?? '—' }}</td>
                             <td class="text-center">
@@ -399,7 +419,9 @@
                                   data-name="{{ $ward->name }}"
                                   data-description="{{ $ward->description }}"
                                   data-category="{{ $ward->category }}"
-                                  data-linen-color="{{ $ward->linen_color }}">
+                                  data-linen-color="{{ $ward->linen_color }}"
+                                  data-nurse-department-id="{{ $ward->nurse_department_id }}"
+                                  data-unit-head-id="{{ $ward->unit_head_id }}">
                                   <i class="ri-edit-line"></i>
                                 </button>
 
@@ -592,6 +614,15 @@
             </select>
           </div>
           <div class="mb-3">
+            <label class="form-label">Nursing unit <span class="text-danger">*</span></label>
+            <select name="nurse_department_id" id="editWardNurseDepartment" class="form-select" required>
+              <option value="">Select a unit</option>
+              @foreach($nursingUnits as $nursingUnit)
+                <option value="{{ $nursingUnit->id }}">{{ $nursingUnit->name }}</option>
+              @endforeach
+            </select>
+          </div>
+          <div class="mb-3">
             <label class="form-label">Linen colour</label>
             <input type="text" name="linen_color" id="editWardLinenColor" class="form-control" placeholder="e.g. Sea Green">
           </div>
@@ -599,6 +630,15 @@
             <label class="form-label">Description</label>
             <textarea name="description" id="editWardDescription"
               class="form-control" rows="3" placeholder="Optional description"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nursing unit head</label>
+            <select name="unit_head_id" id="editWardUnitHead" class="form-select">
+              <option value="">Not assigned</option>
+              @foreach($unitHeads as $unitHead)
+                <option value="{{ $unitHead->id }}">{{ $unitHead->name }}</option>
+              @endforeach
+            </select>
           </div>
         </div>
 
@@ -703,6 +743,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const description = button.getAttribute('data-description') || '';
     const category = button.getAttribute('data-category') || 'Ward';
     const linenColor = button.getAttribute('data-linen-color') || '';
+    const nurseDepartmentId = button.getAttribute('data-nurse-department-id') || '';
+    const unitHeadId = button.getAttribute('data-unit-head-id') || '';
 
     editWardForm.action = `/wards/${id}`;
 
@@ -710,6 +752,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('editWardDescription').value = description;
     document.getElementById('editWardCategory').value = category;
     document.getElementById('editWardLinenColor').value = linenColor;
+    document.getElementById('editWardNurseDepartment').value = nurseDepartmentId;
+    document.getElementById('editWardUnitHead').value = unitHeadId;
   });
 });
 </script>

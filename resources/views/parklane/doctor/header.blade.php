@@ -44,6 +44,8 @@
             ->get();
 
         $unseenCount = $notifications->whereNull('seen_at')->count();
+        $activityNotifications = $doctor->notifications()->latest()->limit(8)->get();
+        $unreadActivityCount = $doctor->unreadNotifications()->count();
 
         $doctorInitials = collect(explode(' ', $doctor->full_name ?? 'D O'))
             ->filter()
@@ -113,6 +115,34 @@
             <a href="#!" class="btn btn-primary btn-sm" id="viewAllNotifications">
               <i class="ri-check-double-line me-1"></i> Mark all as read
             </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <a class="dropdown-toggle header-icon position-relative" href="#!" role="button"
+        data-bs-toggle="dropdown" aria-expanded="false" aria-label="Patient activity notifications">
+        <i class="ri-notification-3-line"></i>
+        @if ($unreadActivityCount > 0)
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            style="font-size:10px; min-width:18px;">{{ $unreadActivityCount }}</span>
+        @endif
+      </a>
+      <div class="dropdown-menu dropdown-menu-end dropdown-300 shadow-lg">
+        <h5 class="fw-semibold px-3 py-2 text-primary border-bottom mb-0">Patient activity</h5>
+        <div class="scroll300">
+          <div class="p-2">
+            @forelse ($activityNotifications as $activityNotification)
+              <a href="{{ route('doctor.activity-notifications.open', $activityNotification->id) }}"
+                class="d-block text-decoration-none text-reset rounded p-2 mb-1 {{ $activityNotification->read_at ? '' : 'bg-light' }}">
+                <div class="fw-semibold small">{{ $activityNotification->data['title'] ?? 'Patient update' }}</div>
+                <div class="small text-muted">{{ $activityNotification->data['message'] ?? '' }}</div>
+                <div class="small text-muted mt-1">{{ $activityNotification->created_at->diffForHumans() }}</div>
+              </a>
+            @empty
+              <div class="text-center text-muted small py-4">No patient activity notifications.</div>
+            @endforelse
           </div>
         </div>
       </div>

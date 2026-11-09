@@ -4,15 +4,22 @@
 
 @include('navbar')
     
+<section class="public-page-hero">
+    <div class="container position-relative">
+        <span class="eyebrow">Fandova services</span>
+        <h1>Practical tools for connected care.</h1>
+        <p>Bring patient updates, handovers, and care-team communication into a clearer daily workflow.</p>
+    </div>
+</section>
 
     <!-- Services Start -->
 <div class="container-fluid py-5">
     <div class="container">
         <div class="text-center mx-auto mb-5" style="max-width: 600px;">
             <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Our Services</h5>
-            <h1 class="display-4">Streamlined Healthcare Fandova & Patient Care Solutions</h1>
+            <h1 class="display-4">Support every step of the care journey</h1>
             <p class="text-muted mt-3">
-                Empowering doctors and nurses with efficient tools for seamless shift transitions, 
+                Helping doctors and nurses with practical tools for seamless shift transitions,
                 clear communication, and improved patient outcomes.
             </p>
         </div>
@@ -25,7 +32,7 @@
                     </div>
                     <h4 class="mb-3">Patient Diagnosis</h4>
                     <p class="m-0">Record and share diagnostic updates effortlessly across shifts to ensure every healthcare provider is fully informed on each patient’s condition.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/appointment') }}" aria-label="Learn about patient diagnosis"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -36,7 +43,7 @@
                     </div>
                     <h4 class="mb-3">Treatment Coordination</h4>
                     <p class="m-0">Easily create, update, and monitor treatment plans for each patient, ensuring consistency of care between doctors and nursing teams.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/appointment') }}" aria-label="Learn about treatment coordination"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -47,7 +54,7 @@
                     </div>
                     <h4 class="mb-3">Ward & Bed Management</h4>
                     <p class="m-0">Monitor real-time ward assignments and bed occupancy, reducing confusion and improving patient allocation efficiency.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/appointment') }}" aria-label="Learn about ward management"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -58,7 +65,7 @@
                     </div>
                     <h4 class="mb-3">Critical Alerts</h4>
                     <p class="m-0">Set up automated notifications for emergencies, pending procedures, and urgent cases to ensure rapid medical response.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/appointment') }}" aria-label="Learn about critical alerts"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -69,7 +76,7 @@
                     </div>
                     <h4 class="mb-3">Medication Management</h4>
                     <p class="m-0">Log prescriptions, track medication schedules, and minimize errors through accurate record-keeping and real-time updates.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/appointment') }}" aria-label="Learn about medication management"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -79,8 +86,8 @@
                         <i class="fa fa-2x fa-microscope text-white"></i>
                     </div>
                     <h4 class="mb-3">Lab & Diagnostic Reports</h4>
-                    <p class="m-0">Access and share lab results, imaging reports, and other test outcomes instantly to aid quick, informed decision-making during Fandovas.</p>
-                    <a class="btn btn-lg btn-primary rounded-pill" href="#"><i class="bi bi-arrow-right"></i></a>
+                    <p class="m-0">Keep important diagnostic updates available to the right care team to support informed decisions across shifts.</p>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="{{ url('/appointment') }}" aria-label="Learn about care coordination"><i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </div>
@@ -99,10 +106,10 @@
                         <h1 class="display-4">Book a Medical Appointment for You or a Loved One</h1>
                     </div>
                     <p class="text-white mb-5">
-                        Schedule a visit with our qualified medical team today. Whether it's a routine checkup or urgent care, our healthcare professionals are ready to attend to you. We make it easier for you and your family to access quality care, quickly and conveniently.
+                        Explore how Fandova helps care teams keep patient information organised and transitions clear. For a visit, contact the hospital or clinic providing your care.
                     </p>
-                    <a class="btn btn-dark rounded-pill py-3 px-5 me-3" href="">Find a Doctor</a>
-                    <a class="btn btn-outline-dark rounded-pill py-3 px-5" href="">Learn More</a>
+                    <a class="btn btn-dark rounded-pill py-3 px-5 me-3" href="{{ url('/appointment') }}">Plan a visit</a>
+                    <a class="btn btn-outline-dark rounded-pill py-3 px-5" href="{{ url('/about') }}">Learn more</a>
                 </div>
                 <div class="col-lg-6">
                     <div class="bg-white text-center rounded p-5">
@@ -178,7 +185,7 @@
                                 </div>
                             </div>
                             <p class="fs-4 fw-normal">
-                                This Fandova system has transformed the way we transfer patient care during shifts. It’s clear, efficient, and keeps everyone informed in real time.
+                                Structured handovers make it easier for our team to pass on important updates and stay aligned throughout a shift.
                             </p>
                             <hr class="w-25 mx-auto">
                             <h3>Dr. Aisha Bello</h3>
@@ -210,7 +217,7 @@
                                 </div>
                             </div>
                             <p class="fs-4 fw-normal">
-                                Communication among nurses and doctors is now much smoother. We no longer miss key patient details during Fandova. Highly recommended!
+                                Communication between nurses and doctors is smoother, and the next shift has a clearer view of patient priorities.
                             </p>
                             <hr class="w-25 mx-auto">
                             <h3>Nurse Grace Umeh</h3>

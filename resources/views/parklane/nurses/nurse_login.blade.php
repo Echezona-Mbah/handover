@@ -189,7 +189,9 @@
         <div class="form-section">
             <a href="javascript:history.back();" class="text-decoration-none text-secondary">&larr; Back</a>
             <h2>Nurse login</h2>
-            <p class="text-center text-muted">Forgot your password? <a href="{{ route('password.request') }}" class="text-primary">Sign in here</a></p>
+            @if(session('success'))<div class="alert alert-success">{{ session('success') }}</div>@endif
+            @if($errors->any())<div class="alert alert-danger">{{ $errors->first() }}</div>@endif
+            <p class="text-center text-muted">Forgot your password? <a href="{{ route('nurse.password.request') }}" class="text-primary">Set or reset it here</a></p>
             
             <form action="{{ route('nurse.login') }}" method="POST">
                 @csrf
@@ -198,7 +200,7 @@
                 <input type="email" id="email" name="email" :value="old('email')"  autocomplete="username">
 
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password"  autocomplete="new-password">
+                <input type="password" id="password" name="password" autocomplete="current-password">
 
                 
                 <button type="submit">Login</button>
@@ -227,6 +229,7 @@
             }, 3000); // Toast disappears after 3 seconds
         }
     </script>
+    @include('partials.password-visibility')
     
     
 </body>

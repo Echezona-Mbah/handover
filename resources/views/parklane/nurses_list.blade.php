@@ -98,6 +98,7 @@
                               <th>Ward</th>
                               <th>Linen Colour</th>
                               <th>Nurse cadre</th>
+                              <th>Ward responsibility</th>
                               <th>Nurses Department</th>
 
                               <th>Actions</th>
@@ -114,6 +115,17 @@
                                   <td>{{ $nurse->ward?->name ?? 'Unassigned' }}</td>
                                   <td>{{ $nurse->ward?->linen_color ?? '—' }}</td>
                                   <td>{{ $nurse->NursingRole?->name ?? '—' }}</td>
+                                  <td>
+                                    <form action="{{ route('nurses.hierarchy-role.update', $nurse->id) }}" method="POST" class="d-flex gap-1">
+                                      @csrf
+                                      @method('PATCH')
+                                      <select name="nursing_hierarchy_role" class="form-select form-select-sm" aria-label="Ward responsibility for {{ $nurse->full_name }}">
+                                        <option value="ward_nurse" @selected(\App\Services\NursingHierarchy::role($nurse) === 'ward_nurse')>Ward nurse</option>
+                                        <option value="ward_supervision" @selected(\App\Services\NursingHierarchy::role($nurse) === 'ward_supervision')>Ward supervision</option>
+                                      </select>
+                                      <button class="btn btn-outline-primary btn-sm">Save</button>
+                                    </form>
+                                  </td>
                                   <td>{{ $nurse->NurseDepartment?->name ?? '—' }}</td>
 
 

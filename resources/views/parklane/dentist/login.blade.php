@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Dentist sign in | Fandova</title>
 
     <style>
         * {
@@ -21,28 +21,36 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f4f4f4;
+            background: #eef3fa;
         }
 
         .container {
             display: flex;
             flex-direction: row;
-            width: 100%;
-            height: 100vh;
-            background: white;
+            width: min(1120px, calc(100% - 40px));
+            min-height: 680px;
+            height: min(760px, calc(100vh - 40px));
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 28px 80px rgba(16, 42, 86, .16);
         }
 
         .image-section {
             flex: 1;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
+            background: #102a56;
         }
 
         .image-section img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            opacity: .82;
         }
         h2 {
             margin-bottom: 15px;
@@ -66,8 +74,34 @@
         }
         .form-section {
             flex: 1;
-            padding: 50px;
-            background: white;
+            padding: clamp(30px, 6vw, 76px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(145deg, #ffffff, #f7faff);
+        }
+
+        .form-section h2 {
+            text-align: left;
+            color: #172b4d;
+            font-size: clamp(28px, 3vw, 38px);
+            font-weight: 700;
+        }
+
+        .form-section form {
+            width: 100%;
+        }
+
+        .form-section input {
+            border-radius: 10px;
+            border-color: #d8e0eb;
+        }
+
+        .form-section button {
+            margin-top: 8px;
+            border-radius: 10px;
+            background: #155eef;
+            font-weight: 700;
         }
 
         h2 {
@@ -109,22 +143,26 @@
         }
 
         button:hover {
-            background-color: #13C5DD;
+            background-color: #0b4bc1;
         }
 
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
+                width: min(560px, calc(100% - 24px));
+                height: auto;
+                min-height: calc(100vh - 24px);
+                margin: 12px auto;
             }
 
             .image-section {
-                height: 40vh;
+                height: 190px;
                 order: 2;
             }
 
             .form-section {
                 order: 1;
-                padding: 30px;
+                padding: 36px 28px;
             }
         }
         #toast-container {
@@ -189,23 +227,23 @@
         <div class="form-section">
             <a href="javascript:history.back();" class="text-decoration-none text-secondary">&larr; Back</a>
             <h2>Dentist login</h2>
-            <p class="text-center text-muted">Forgot your password? <a href="{{ route('password.request') }}" class="text-primary">Sign in here</a></p>
+            <p class="text-center text-muted">Access your dental care workspace securely.</p>
             
-            <form action="{{ route('dentist.login') }}" method="POST">
+            <form action="{{ route('dentist.login.submit') }}" method="POST">
                 @csrf
                 
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" :value="old('email')"  autocomplete="username">
+                <input type="email" id="email" name="email" value="{{ old('email') }}" autocomplete="username" required>
 
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password"  autocomplete="new-password">
+                <input type="password" id="password" name="password" autocomplete="current-password" required>
 
                 
                 <button type="submit">Login</button>
             </form>
         </div>
         <div class="image-section">
-            <img src="../assets/images/78f00bdb0503d5f6e2.jpg" style="object-fit:fill; " alt="Register Image">
+            <img src="{{ asset('assets/images/78f00bdb0503d5f6e2.jpg') }}" alt="Dental care team">
         </div>
     </div>
     <script>
@@ -227,6 +265,7 @@
             }, 3000); // Toast disappears after 3 seconds
         }
     </script>
+    @include('partials.password-visibility')
     
     
 </body>

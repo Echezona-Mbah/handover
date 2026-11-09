@@ -205,6 +205,11 @@ class PatientController extends Controller
             return true;
         }
 
+        if (app(\App\Services\CrossRolePatientWorkflow::class)
+            ->incomingRequests($patient, 'invite')->where('status', 'accepted')->exists()) {
+            return true;
+        }
+
         $query = PatientUnitInvite::where('patient_id', $patient->id)
             ->where('status', 'accepted');
 
@@ -237,14 +242,27 @@ class PatientController extends Controller
         $subUnitId = $doctor->doctor_sub_unit_id;
 
         // Assigned patients
-        $assigned = Patient::where('doctor_unit_id', $unitId)
-            ->where('status', 'active');
+        $assigned = Patient::where('hospital_id', $doctor->hospital_id)
+            ->where('status', 'active')
+            ->where(function ($query) use ($doctor, $unitId, $subUnitId) {
+                if ($unitId) {
+                    $query->where('doctor_unit_id', $unitId);
+                    if ($subUnitId) {
+                        $query->where('doctor_sub_unit_id', $subUnitId);
+                    } else {
+                        $query->whereNull('doctor_sub_unit_id');
+                    }
+                }
 
-        if ($subUnitId) {
-            $assigned->where('doctor_sub_unit_id', $subUnitId);
-        } else {
-            $assigned->whereNull('doctor_sub_unit_id');
-        }
+                if ($doctor->doctor_departments) {
+                    $query->orWhere(function ($departmentPatients) use ($doctor) {
+                        $departmentPatients->where('doctor_departments', $doctor->doctor_departments)
+                            ->whereNull('doctor_unit_id');
+                    });
+                } elseif (! $unitId) {
+                    $query->whereRaw('1 = 0');
+                }
+            });
 
         // Invited patients
         $invited = Patient::whereIn('id', function ($q) use ($unitId, $subUnitId) {
@@ -270,11 +288,14 @@ class PatientController extends Controller
                 }
             });
 
+        $crossRequestPatientIds = app(\App\Services\CrossRolePatientWorkflow::class)
+            ->incomingPatientIds('doctor', $doctor);
         // Merge all and remove duplicates
-        $patients = Patient::where(function ($query) use ($assigned, $invited, $pendingTransfers) {
+        $patients = Patient::where(function ($query) use ($assigned, $invited, $pendingTransfers, $crossRequestPatientIds) {
                 $query->whereIn('id', $assigned->select('id'))
                     ->orWhereIn('id', $invited->select('id'))
-                    ->orWhereIn('id', $pendingTransfers->select('id'));
+                    ->orWhereIn('id', $pendingTransfers->select('id'))
+                    ->orWhereIn('id', $crossRequestPatientIds);
             })
             ->orderBy('id', 'desc')
             ->paginate(10);
@@ -682,13 +703,18 @@ class PatientController extends Controller
         // Views can use this to hide/disable action buttons for
         // doctors whose unit hasn't accepted an invite yet.
         $canManage = $this->doctorCanManagePatient($doctor, $patient);
+        $crossWorkflow = app(\App\Services\CrossRolePatientWorkflow::class);
+        $crossRoleDepartments = $crossWorkflow->departments((int) $doctor->hospital_id, 'dentist');
+        $incomingCrossRoleRequests = $crossWorkflow->incomingRequests($patient)->where('status', 'pending')->get();
 
         return view('parklane.doctor.show_patient', compact(
             'patient',
             'medications',
             'handoverNotes',
             'departments',
-            'canManage'
+            'canManage',
+            'crossRoleDepartments',
+            'incomingCrossRoleRequests'
         ));
     }
 

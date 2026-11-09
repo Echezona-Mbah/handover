@@ -19,11 +19,20 @@
           </div>
           <div class="card-body">
             <p><strong>Date:</strong> {{ $report->report_date?->format('d M Y') }} | <strong>Shift:</strong> {{ $report->shift ?? 'N/A' }}</p>
+            <p><strong>Sent to:</strong>
+              @if($report->recipient_role === 'hns_and_unit_head') HNS Office and assigned unit head
+              @elseif($report->recipient_role === 'unit_head') Assigned unit head
+              @else Historical recipient @endif
+            </p>
             <p><strong>Patient:</strong> {{ $report->patient->full_name ?? 'Ward or general report' }}</p>
-            <h6>Original Summary</h6><p>{{ $report->summary }}</p>
-            <h6>Incidents</h6><p>{{ $report->incidents ?? 'None recorded' }}</p>
-            <h6>Referrals</h6><p>{{ $report->referrals ?? 'None recorded' }}</p>
-            <h6>Administrative Notes</h6><p>{{ $report->administrative_notes ?? 'None recorded' }}</p>
+            @if($report->patient_id)
+              <h6>Patient-specific Nursing Notes</h6><p>{{ $report->incidents }}</p>
+            @else
+              <h6>{{ $report->report_type === 'incident' ? 'Incident Details' : 'Original Summary' }}</h6><p>{{ $report->summary }}</p>
+              @if($report->incidents)<h6>Incident Involvement</h6><p>{{ $report->incidents }}</p>@endif
+              @if($report->referrals)<h6>Referrals or Follow-up</h6><p>{{ $report->referrals }}</p>@endif
+              @if($report->administrative_notes)<h6>Administrative Notes</h6><p>{{ $report->administrative_notes }}</p>@endif
+            @endif
           </div>
         </div>
         <div class="card">
@@ -45,4 +54,3 @@
   </div>
 </div>
 @include('parklane.nurses.script')
-

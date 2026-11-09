@@ -14,7 +14,9 @@ class Patient extends Model
         'nurse_id',
         'doctor_unit_id',
         'doctor_sub_unit_id',
+        'doctor_departments',
         'dentist_unit_id',
+        'dentist_department_id',
         'patient_number',
         'full_name',
         'dob',
@@ -107,6 +109,11 @@ public function doctorUnit()
 public function doctorSubUnit()
 {
     return $this->belongsTo(DoctorSubUnit::class, 'doctor_sub_unit_id');
+}
+
+public function nursingProcessRecords()
+{
+return $this->hasMany(NursingProcessRecord::class)->latest();
 }
 
 

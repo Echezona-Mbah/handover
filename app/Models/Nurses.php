@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\NursePasswordResetNotification;
 
 class Nurses extends Authenticatable
 {
@@ -11,6 +12,11 @@ class Nurses extends Authenticatable
 
     protected $table = 'nurses';
     protected $primaryKey = 'id';
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new NursePasswordResetNotification($token));
+    }
 
     protected $fillable = [
         'full_name',
@@ -32,6 +38,7 @@ class Nurses extends Authenticatable
         'ward_id',
         'nurse_department_id',
         'nursing_role_id',
+        'nursing_hierarchy_role',
         'sun_start',
         'sun_end',
         'mon_start',

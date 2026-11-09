@@ -123,6 +123,12 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        'nurses' => [
+            'provider' => 'nurses',
+            'table' => 'nurse_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
     ],
 
     /*

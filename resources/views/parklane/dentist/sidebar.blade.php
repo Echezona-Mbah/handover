@@ -20,10 +20,20 @@
     <!-- Sidebar menu starts -->
     <div class="sidebarMenuScroll">
       <ul class="sidebar-menu">
-        <li class="active current-page">
+        <li class="{{ request()->routeIs('dentist.dashboard') ? 'active current-page' : '' }}">
           <a href="{{ route('dentist.dashboard') }}">
             <i class="ri-home-6-line"></i>
             <span class="menu-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="{{ request()->routeIs('dentist.activity-notifications.*') ? 'active current-page' : '' }}">
+          <a href="{{ route('dentist.activity-notifications.index') }}">
+            <i class="ri-notification-3-line"></i>
+            <span class="menu-text">Notifications</span>
+            @php($unreadDentistNotifications = Auth::guard('dentist')->user()->unreadNotifications()->count())
+            @if ($unreadDentistNotifications > 0)
+              <span class="badge rounded-pill bg-danger ms-auto">{{ $unreadDentistNotifications }}</span>
+            @endif
           </a>
         </li>
         {{-- <li>
@@ -38,16 +48,16 @@
             <span class="menu-text">Dentist Dashboard</span>
           </a>
         </li> --}}
-        <li class="treeview">
+        <li class="treeview {{ request()->routeIs('dentist.profile', 'updateProfile', 'dentist.available', 'updateAvailable') ? 'active' : '' }}">
           <a href="#!">
             <i class="ri-stethoscope-line"></i>
             <span class="menu-text">Profile</span>
           </a>
           <ul class="treeview-menu">
-            <li>
+            <li class="{{ request()->routeIs('dentist.profile', 'updateProfile') ? 'active current-page' : '' }}">
               <a href="{{ route('dentist.profile') }}">Update Profile</a>
             </li>
-            <li>
+            <li class="{{ request()->routeIs('dentist.available', 'updateAvailable') ? 'active current-page' : '' }}">
               <a href="{{ route('dentist.available') }}">Availability</a>
             </li>
             {{-- <li>
@@ -64,7 +74,7 @@
             </li> --}}
           </ul>
         </li>
-        <li>
+        <li class="{{ request()->routeIs('dentist.patient', 'dentist.show_patient', 'dentist.add_patient', 'dentist.patients.plan', 'dentist.edit_patients', 'dentist.patientUpdate') ? 'active current-page' : '' }}">
           <a href="{{route('dentist.patient')}}">
             <i class="ri-heart-pulse-line"></i>
             <span class="menu-text">Patients</span>
@@ -90,28 +100,11 @@
             </li>
           </ul>
         </li> --}}
-                      <li>
+        <li class="{{ request()->routeIs('dentist.news', 'dentist.show') ? 'active current-page' : '' }}">
           <a href="{{ route('dentist.news') }}">
             <i class="ri-news-line"></i>
-            <span class="menu-text">News & Updates</span>
+            <span class="menu-text">Hospital news</span>
           </a>
-        </li>
-        <li class="treeview">
-          <a href="#!">
-            <i class="ri-nurse-line"></i>
-            <span class="menu-text">Staff</span>
-          </a>
-          <ul class="treeview-menu">
-            <li>
-              <a href="staff.html">Staff List</a>
-            </li>
-            <li>
-              <a href="add-staff.html">Add Staff</a>
-            </li>
-            <li>
-              <a href="edit-staff.html">Edit Staff Details</a>
-            </li>
-          </ul>
         </li>
         {{-- <li class="treeview">
           <a href="#!">

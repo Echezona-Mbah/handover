@@ -4,12 +4,19 @@
 
 @include('navbar')
 
+<section class="public-page-hero">
+    <div class="container position-relative">
+        <span class="eyebrow">Voices from care teams</span>
+        <h1>Built around the people who care.</h1>
+        <p>Hear how clearer handovers and shared updates can support the people delivering care every day.</p>
+    </div>
+</section>
     <!-- Testimonial Start -->
     <div class="container-fluid py-5">
         <div class="container">
             <div class="text-center mx-auto mb-5" style="max-width: 500px;">
                 <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Testimonial</h5>
-                <h1 class="display-4">What Our Users Say</h1>
+                <h1 class="display-4">What our care community values</h1>
             </div>
             <div class="row justify-content-center">
                 <div class="col-lg-8">
@@ -23,7 +30,7 @@
                                 </div>
                             </div>
                             <p class="fs-4 fw-normal">
-                                This Fandova system has transformed the way we transfer patient care during shifts. It’s clear, efficient, and keeps everyone informed in real time.
+                                Structured handovers make it easier for our team to pass on important updates and stay aligned throughout a shift.
                             </p>
                             <hr class="w-25 mx-auto">
                             <h3>Dr. Aisha Bello</h3>
@@ -55,7 +62,7 @@
                                 </div>
                             </div>
                             <p class="fs-4 fw-normal">
-                                Communication among nurses and doctors is now much smoother. We no longer miss key patient details during Fandova. Highly recommended!
+                                Communication between nurses and doctors is smoother, and the next shift has a clearer view of patient priorities.
                             </p>
                             <hr class="w-25 mx-auto">
                             <h3>Nurse Grace Umeh</h3>

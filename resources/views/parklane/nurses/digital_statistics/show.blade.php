@@ -11,6 +11,8 @@
           <div class="card-body table-responsive">
             <table class="table table-bordered">
               <tbody>
+                <tr><th>Ward</th><td>{{ $statistic->ward->name ?? 'N/A' }}</td></tr>
+                <tr><th>Submitted by</th><td>{{ $statistic->nurse->full_name ?? 'N/A' }}</td></tr>
                 @foreach(['admissions','discharges','transfers','deaths','bed_occupied','bed_vacant','clinic_attendance','specialized_service_count'] as $field)
                   <tr><th>{{ ucwords(str_replace('_', ' ', $field)) }}</th><td>{{ $statistic->{$field} }}</td></tr>
                 @endforeach
@@ -25,4 +27,3 @@
   </div>
 </div>
 @include('parklane.nurses.script')
-

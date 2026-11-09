@@ -4,12 +4,19 @@
 
 @include('navbar')
 
+<section class="public-page-hero">
+    <div class="container position-relative">
+        <span class="eyebrow">Our people</span>
+        <h1>Meet the professionals behind compassionate care.</h1>
+        <p>Discover the clinicians and healthcare teams who bring expertise, empathy, and collaboration to every patient interaction.</p>
+    </div>
+</section>
     <!-- Team Start -->
     <div class="container-fluid py-5">
         <div class="container">
             <div class="text-center mx-auto mb-5" style="max-width: 500px;">
                 <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Our Doctors</h5>
-                <h1 class="display-4">Qualified Healthcare Professionals</h1>
+                <h1 class="display-4">Experience joined by compassion</h1>
             </div>
             <div class="owl-carousel team-carousel position-relative">
                 <div class="team-item">

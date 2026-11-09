@@ -156,9 +156,20 @@
               <div class="col-lg-4">
                 <div class="d-flex justify-content-lg-end">
                   @if($canManage)
-                    <button class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#dischargeModal{{ $patient->id }}">
-                      <i class="ri-logout-box-r-line"></i> Discharge Patient
-                    </button>
+                    <div class="d-flex flex-wrap justify-content-lg-end gap-2">
+                      <a href="{{ route('doctor.appointments.index', ['patient_id' => $patient->id]) }}" class="btn btn-light btn-lg">
+                        <i class="ri-calendar-check-line"></i> Schedule follow-up
+                      </a>
+                      <button class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#inviteDentistTeamModal">
+                        <i class="ri-user-shared-line"></i> Invite dental team
+                      </button>
+                      <button class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#transferDentistTeamModal">
+                        <i class="ri-arrow-left-right-line"></i> Transfer to dental team
+                      </button>
+                      <button class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#dischargeModal{{ $patient->id }}">
+                        <i class="ri-logout-box-r-line"></i> Discharge Patient
+                      </button>
+                    </div>
                   @else
                     <button class="btn btn-secondary btn-lg" disabled
                       data-bs-toggle="tooltip" data-bs-placement="left"
@@ -171,6 +182,66 @@
             </div>
           </div>
         </div>
+
+        @if($incomingCrossRoleRequests->isNotEmpty())
+          <div class="card border-warning mb-4">
+            <div class="card-header bg-warning-subtle fw-semibold">Dental team requests awaiting your response</div>
+            <div class="card-body">
+              @foreach($incomingCrossRoleRequests as $crossRequest)
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-2">
+                  <span>
+                    {{ ucfirst($crossRequest->request_type) }} from a dental team for {{ $patient->full_name }}.
+                    {{ $crossRequest->message }}
+                  </span>
+                  <div class="d-flex gap-2">
+                    <form method="POST" action="{{ route('doctor.cross-role.respond', [$crossRequest->id, 'accept']) }}">@csrf<button class="btn btn-sm btn-success">Accept</button></form>
+                    <form method="POST" action="{{ route('doctor.cross-role.respond', [$crossRequest->id, 'reject']) }}">@csrf<button class="btn btn-sm btn-outline-danger">Decline</button></form>
+                  </div>
+                </div>
+              @endforeach
+            </div>
+          </div>
+        @endif
+
+        @foreach([
+          ['id' => 'inviteDentistTeamModal', 'route' => 'doctor.cross-role.invite', 'title' => 'Invite a dental team', 'submit' => 'Send invitation'],
+          ['id' => 'transferDentistTeamModal', 'route' => 'doctor.cross-role.transfer', 'title' => 'Transfer to a dental team', 'submit' => 'Send transfer request'],
+        ] as $crossTeamModal)
+          <div class="modal fade cross-dentist-team-modal" id="{{ $crossTeamModal['id'] }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <form method="POST" action="{{ route($crossTeamModal['route']) }}">
+                  @csrf
+                  <input type="hidden" name="patient_id" value="{{ $patient->id }}">
+                  <div class="modal-header">
+                    <h5 class="modal-title">{{ $crossTeamModal['title'] }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p class="small text-muted">Choose a dental department and optionally a unit. No individual dentist is selected.</p>
+                    <label class="form-label">Dental department</label>
+                    <select class="form-select mb-3 cross-dentist-department" name="target_department_id" required>
+                      <option value="">Choose department</option>
+                      @foreach($crossRoleDepartments as $department)
+                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                      @endforeach
+                    </select>
+                    <label class="form-label">Dental unit (optional)</label>
+                    <select class="form-select mb-3 cross-dentist-unit" name="target_unit_id" disabled>
+                      <option value="">Target whole department</option>
+                    </select>
+                    <label class="form-label">Message or handover notes (optional)</label>
+                    <textarea name="message" class="form-control" rows="3"></textarea>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">{{ $crossTeamModal['submit'] }}</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        @endforeach
 
         <div id="toast-container"></div>
 
@@ -701,6 +772,32 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.cross-dentist-department').forEach(select => {
+    select.addEventListener('change', async function () {
+      const unitSelect = this.closest('form').querySelector('.cross-dentist-unit');
+      unitSelect.innerHTML = '<option value="">Target whole department</option>';
+      unitSelect.disabled = true;
+      if (!this.value) return;
+      try {
+        const response = await fetch("{{ route('doctor.cross-role.departments') }}/" + this.value + "/units", {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!response.ok) throw new Error('Could not load dental units.');
+        const units = await response.json();
+        units.forEach(unit => {
+          const option = document.createElement('option');
+          option.value = unit.id;
+          option.textContent = unit.name;
+          unitSelect.appendChild(option);
+        });
+        unitSelect.disabled = false;
+      } catch (error) {
+        this.value = '';
+        alert(error.message);
+      }
+    });
+  });
+
   document.querySelectorAll('.discharge-type').forEach(select => {
     select.addEventListener('change', function () {
       const patientId = this.dataset.patient;

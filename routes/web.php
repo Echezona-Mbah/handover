@@ -12,10 +12,13 @@ use App\Http\Controllers\Admin\ProfilesController;
 use App\Http\Controllers\Admin\SubadminController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Dentist\AvailabilityController as DentistAvailabilityController;
+use App\Http\Controllers\Dentist\ActivityNotificationController as DentistActivityNotificationController;
 use App\Http\Controllers\Dentist\DashboardController as DentistDashboardController;
 use App\Http\Controllers\Dentist\PatientController as DentistPatientController;
 use App\Http\Controllers\Dentist\ProfileController as DentistProfileController;
+use App\Http\Controllers\CrossRolePatientWorkflowController;
 use App\Http\Controllers\Doctor\AvailabilityController;
+use App\Http\Controllers\Doctor\AppointmentController;
 use App\Http\Controllers\Doctor\DashboardController;
 use App\Http\Controllers\Doctor\DoctorController as DoctorDoctorController;
 use App\Http\Controllers\Doctor\DoctorForgotPasswordController;
@@ -26,14 +29,20 @@ use App\Http\Controllers\Doctor\ProfileController;
 use App\Http\Controllers\Nurse\DashboardController as NurseDashboardController;
 use App\Http\Controllers\Nurse\NewsController as NurseNewsController;
 use App\Http\Controllers\Nurse\NurseController;
+use App\Http\Controllers\Nurse\NursePasswordController;
 use App\Http\Controllers\Nurse\NotificationController as NurseNotificationController;
 use App\Http\Controllers\Nurse\PatientController as NursePatientController;
 
 
 use App\Http\Controllers\Admin\NursingDigitalController;
+use App\Http\Controllers\Admin\NursingDirectoryController;
+use App\Http\Controllers\Admin\NursingAdminDashboardController;
+use App\Http\Controllers\Admin\NursingAdminNotificationController;
 use App\Http\Controllers\Nurse\NursingReportController;
+use App\Http\Controllers\Nurse\NursingProcessController;
 use App\Http\Controllers\Nurse\NursingRosterController;
 use App\Http\Controllers\Nurse\NursingStatisticController;
+use App\Http\Controllers\NursingQueryController;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -86,6 +95,10 @@ Route::get('/clear-cache', [DashboardController::class, 'clearCache']);
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
+    if ($user->nursing_admin_role || $user->nursing_hierarchy_role) {
+        return redirect()->route('admin.nursing.dashboard');
+    }
+
     $doctorsQuery = DB::table('doctors');
     if (!$user->is_super_admin) {
         $doctorsQuery->where('doctor_departments', $user->doctor_department_id);
@@ -120,9 +133,20 @@ Route::get('/not-found', function () {
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('/nursing/queries', [NursingQueryController::class, 'index'])->name('nursing.queries.index');
+    Route::get('/nursing/queries/create', [NursingQueryController::class, 'create'])->name('nursing.queries.create');
+    Route::post('/nursing/queries', [NursingQueryController::class, 'store'])->name('nursing.queries.store');
+    Route::post('/nursing/queries/{query}/respond', [NursingQueryController::class, 'respond'])->name('nursing.queries.respond');
+    Route::post('/nursing/queries/{query}/close', [NursingQueryController::class, 'close'])->name('nursing.queries.close');
+
+        Route::get('/nursing-admin/dashboard', NursingAdminDashboardController::class)->name('admin.nursing.dashboard');
+        Route::get('/nursing-admin/notifications', [NursingAdminNotificationController::class, 'index'])->name('admin.nursing.notifications.index');
+        Route::post('/nursing-admin/notifications/{notification}/read', [NursingAdminNotificationController::class, 'markAsRead'])->name('admin.nursing.notifications.read');
+
         Route::get('/add_admin_user', [SubadminController::class, 'create'])->name('add_admin_user');
         Route::post('/add_admin_user', [SubadminController::class, 'store'])->name('store_admin_user');
         Route::get('/admin_user_list', [SubadminController::class, 'index'])->name('admin_user_list');
+        Route::get('/admin_user/{user}', [SubadminController::class, 'show'])->name('admin_user.show');
         Route::delete('/admin_user/{user}', [SubadminController::class, 'destroy'])->name('admin_user.destroy');
 
 
@@ -171,21 +195,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/add_nurse', [NuresController::class, 'createNurse'])->name('add_nurse');
     Route::post('/add_nurse', [NuresController::class, 'storeNurse'])->name('storeNurse.add_nurse');
     Route::get('/nurse_list', [NuresController::class, 'showNurseList'])->name('nurse_list');
+    Route::patch('/nurses/{id}/hierarchy-role', [NuresController::class, 'updateHierarchyRole'])->name('nurses.hierarchy-role.update');
     Route::get('/show_nurse/{id}', [NuresController::class, 'showNures'])->name('nurse.showew');
     Route::delete('/show_nurse/{nurse}', [NuresController::class, 'destroyNurse'])->name('nurse.destroy');
     Route::get('/nursing/notifications/create', [AdminNurseNotificationController::class, 'create'])->name('admin.nurse-notifications.create');
     Route::get('/nursing/notifications/acknowledgements', [AdminNurseNotificationController::class, 'acknowledgements'])->name('admin.nurse-notifications.acknowledgements');
     Route::post('/nursing/notifications', [AdminNurseNotificationController::class, 'store'])->name('admin.nurse-notifications.store');
     Route::get('/nursing/reports', [NursingDigitalController::class, 'reports'])->name('admin.nursing.reports');
-Route::get('/nursing/reports/{report}', [NursingDigitalController::class, 'showReport'])->name('admin.nursing.reports.show');
-Route::post('/nursing/reports/{report}/review', [NursingDigitalController::class, 'reviewReport'])->name('admin.nursing.reports.review');
+    Route::get('/nursing/reports/{report}', [NursingDigitalController::class, 'showReport'])->name('admin.nursing.reports.show');
+    Route::post('/nursing/reports/{report}/review', [NursingDigitalController::class, 'reviewReport'])->name('admin.nursing.reports.review');
+    Route::post('/nursing/reports/{report}/escalate', [NursingDigitalController::class, 'escalateReport'])->name('admin.nursing.reports.escalate');
 
-Route::get('/nursing/statistics', [NursingDigitalController::class, 'statistics'])->name('admin.nursing.statistics');
-Route::post('/nursing/statistics/{statistic}/verify', [NursingDigitalController::class, 'verifyStatistic'])->name('admin.nursing.statistics.verify');
+    Route::get('/nursing/statistics', [NursingDigitalController::class, 'statistics'])->name('admin.nursing.statistics');
+    Route::post('/nursing/statistics/{statistic}/verify', [NursingDigitalController::class, 'verifyStatistic'])->name('admin.nursing.statistics.verify');
 
-Route::get('/nursing/rosters', [NursingDigitalController::class, 'rosters'])->name('admin.nursing.rosters');
-Route::get('/nursing/rosters/{roster}', [NursingDigitalController::class, 'showRoster'])->name('admin.nursing.rosters.show');
-Route::post('/nursing/rosters/{roster}/approve', [NursingDigitalController::class, 'approveRoster'])->name('admin.nursing.rosters.approve');
+    Route::get('/nursing/rosters', [NursingDigitalController::class, 'rosters'])->name('admin.nursing.rosters');
+    Route::get('/nursing/rosters/{roster}', [NursingDigitalController::class, 'showRoster'])->name('admin.nursing.rosters.show');
+    Route::post('/nursing/rosters/{roster}/approve', [NursingDigitalController::class, 'approveRoster'])->name('admin.nursing.rosters.approve');
+    Route::get('/nursing/patients', [NursingDirectoryController::class, 'patients'])->name('admin.nursing.patients');
+    Route::get('/nursing/patients/{patient}', [NursingDirectoryController::class, 'patient'])->name('admin.nursing.patients.show');
+    Route::get('/nursing/ward-nurses', [NursingDirectoryController::class, 'nurses'])->name('admin.nursing.nurses');
 
     // Dentist
     Route::get('/add_dentist', [DentistController::class, 'create'])->name('add_dentist');
@@ -277,6 +306,11 @@ Route::middleware(['doctor.auth', 'doctor.activity'])->group(function () {
 
 
     Route::get('/doctor/dashboard', [DashboardController::class, 'index'])->name('doctor.dashboard');
+    Route::get('/doctor/notifications/{notification}', [DentistActivityNotificationController::class, 'openDoctor'])
+        ->name('doctor.activity-notifications.open');
+    Route::get('/doctor/appointments', [AppointmentController::class, 'index'])->name('doctor.appointments.index');
+    Route::post('/doctor/appointments', [AppointmentController::class, 'store'])->name('doctor.appointments.store');
+    Route::patch('/doctor/appointments/{appointment}/status', [AppointmentController::class, 'updateStatus'])->name('doctor.appointments.status');
     Route::get('/doctor/profile', [ProfileController::class, 'index'])->name('doctor.profile');
     Route::put('/doctor/profile', [ProfileController::class, 'updateProfile'])->name('updateProfile');
     Route::get('/doctor/available', [AvailabilityController::class, 'index'])->name('doctor.available');
@@ -307,6 +341,11 @@ Route::middleware(['doctor.auth', 'doctor.activity'])->group(function () {
 
 
     Route::post('/doctor/invite-unit', [DoctorPatientController::class, 'inviteUnit'])->name('doctor.invite.unit');
+    Route::get('/doctor/cross-role/departments', [CrossRolePatientWorkflowController::class, 'departments'])->name('doctor.cross-role.departments');
+    Route::get('/doctor/cross-role/departments/{department}/units', [CrossRolePatientWorkflowController::class, 'units'])->name('doctor.cross-role.units');
+    Route::post('/doctor/patient/cross-role/invite', [CrossRolePatientWorkflowController::class, 'storeInvite'])->name('doctor.cross-role.invite');
+    Route::post('/doctor/patient/cross-role/transfer', [CrossRolePatientWorkflowController::class, 'storeTransfer'])->name('doctor.cross-role.transfer');
+    Route::post('/doctor/patient/cross-role/{crossRequest}/{decision}', [CrossRolePatientWorkflowController::class, 'respond'])->name('doctor.cross-role.respond');
     Route::get('/get-units-doctor/{department_id}', [DoctorPatientController::class, 'getUnits'])->name('get.units');
     Route::get('/get-sub-units-doctor/{unit_id}', [DoctorPatientController::class, 'getSubUnits'])->name('get.sub.units');
 
@@ -343,8 +382,18 @@ Route::middleware(['doctor.auth', 'doctor.activity'])->group(function () {
 
 Route::get('nurse/login', [NurseDashboardController::class, 'createNurse'])->name('nurse.login');
 Route::post('nurse/login', [NurseDashboardController::class, 'nurseLogin'])->name('nurse.login.submit');
+Route::get('/nurse/forgot-password', [NursePasswordController::class, 'showForgotForm'])->name('nurse.password.request');
+Route::post('/nurse/forgot-password', [NursePasswordController::class, 'sendResetLink'])->name('nurse.password.email');
+Route::get('/nurse/reset-password/{token}', [NursePasswordController::class, 'showResetForm'])->name('nurse.password.reset');
+Route::post('/nurse/reset-password', [NursePasswordController::class, 'resetPassword'])->name('nurse.password.reset.submit');
 
 Route::middleware(['authNurse'])->group(function () {
+    Route::get('/nurse/queries', [NursingQueryController::class, 'index'])->name('nurse.queries.index');
+    Route::get('/nurse/queries/create', [NursingQueryController::class, 'create'])->name('nurse.queries.create');
+    Route::post('/nurse/queries', [NursingQueryController::class, 'store'])->name('nurse.queries.store');
+    Route::post('/nurse/queries/{query}/respond', [NursingQueryController::class, 'respond'])->name('nurse.queries.respond');
+    Route::post('/nurse/queries/{query}/close', [NursingQueryController::class, 'close'])->name('nurse.queries.close');
+    Route::post('/nurse/logout', [NurseDashboardController::class, 'logout'])->name('nurse.logout');
     Route::get('/nurse/dashboard', [NurseDashboardController::class, 'indexNurse'])->name('nurse.dashboard');
     Route::get('/nurse/notifications', [NurseNotificationController::class, 'index'])->name('nurse.notifications.index');
     Route::post('/nurse/notifications/{notification}/read', [NurseNotificationController::class, 'markAsRead'])->name('nurse.notifications.read');
@@ -360,7 +409,16 @@ Route::middleware(['authNurse'])->group(function () {
     Route::get('/nurse/patient', [NursePatientController::class, 'myPatients'])->name('nurse.patient');
     Route::get('/nurse/patients/create', [NursePatientController::class, 'createPatient'])->name('nurse.patients.create');
     Route::post('/nurse/patients', [NursePatientController::class, 'storePatient'])->name('nurse.patients.store');
+    Route::post('/nurse/patients/{patient}/discharge', [NursePatientController::class, 'dischargePatient'])->name('nurse.patients.discharge');
+    Route::post('/nurse/patients/{patient}/reports', [NursePatientController::class, 'storePatientReport'])->name('nurse.patient-reports.store');
+    Route::put('/nurse/patient-reports/{report}', [NursePatientController::class, 'updatePatientReport'])->name('nurse.patient-reports.update');
+    Route::post('/nurse/patient-reports/{report}/send', [NursePatientController::class, 'sendPatientReport'])->name('nurse.patient-reports.send');
+    Route::post('/nurse/ward-transfers/{query}/{decision}', [NursePatientController::class, 'respondToWardTransfer'])->name('nurse.ward-transfers.respond');
     Route::get('/nurse/show_patient/{id}', [NursePatientController::class, 'show'])->name('nurse.show_patient');
+    Route::get('/nurse/patients/{patient}/edit', [NursePatientController::class, 'editPatient'])->name('nurse.patients.edit');
+    Route::put('/nurse/patients/{patient}', [NursePatientController::class, 'updatePatient'])->name('nurse.patients.update');
+    Route::get('/nurse/patients/{patient}/nursing-process/create', [NursingProcessController::class, 'create'])->name('nurse.nursing-process.create');
+    Route::post('/nurse/patients/{patient}/nursing-process', [NursingProcessController::class, 'store'])->name('nurse.nursing-process.store');
 
     Route::get('/nurse/patient/plan/{patient}', [NursePatientController::class, 'store'])->name('nurse.patients.plan');
     Route::post('/nurse/patient/medication/store', [NursePatientController::class, 'storeMedication'])->name('nurse.medicationsstore');
@@ -401,6 +459,12 @@ Route::post('dentist/login', [DentistDashboardController::class, 'dentistLogin']
 Route::middleware(['auth:dentist'])->group(function () {
     // dd('sdddddddsd');
     Route::get('/dentist/dashboard', [DentistDashboardController::class, 'index'])->name('dentist.dashboard');
+    Route::get('/dentist/notifications', [DentistActivityNotificationController::class, 'index'])
+        ->name('dentist.activity-notifications.index');
+    Route::post('/dentist/notifications/read-all', [DentistActivityNotificationController::class, 'markAllAsRead'])
+        ->name('dentist.activity-notifications.read-all');
+    Route::get('/dentist/notifications/{notification}', [DentistActivityNotificationController::class, 'openDentist'])
+        ->name('dentist.activity-notifications.open');
     Route::get('/dentist/profile', [DentistProfileController::class, 'index'])->name('dentist.profile');
     Route::put('/dentist/profile', [DentistProfileController::class, 'updateProfile'])->name('updateProfile');
     Route::get('/dentist/available', [DentistAvailabilityController::class, 'index'])->name('dentist.available');
@@ -411,6 +475,17 @@ Route::middleware(['auth:dentist'])->group(function () {
     Route::post('/dentist/add_patient/store', [DentistPatientController::class, 'storeDentistAddPatients'])->name('dentist.store_patient');
 
     Route::get('/dentist/patient', [DentistPatientController::class, 'myPatients'])->name('dentist.patient');
+    Route::get('/dentist/cross-role/departments', [CrossRolePatientWorkflowController::class, 'departments'])->name('dentist.cross-role.departments');
+    Route::get('/dentist/cross-role/departments/{department}/units', [CrossRolePatientWorkflowController::class, 'units'])->name('dentist.cross-role.units');
+    Route::get('/dentist/cross-role/units/{unit}/subunits', [CrossRolePatientWorkflowController::class, 'subUnits'])->name('dentist.cross-role.subunits');
+    Route::post('/dentist/patient/cross-role/invite', [CrossRolePatientWorkflowController::class, 'storeInvite'])->name('dentist.cross-role.invite');
+    Route::post('/dentist/patient/cross-role/transfer', [CrossRolePatientWorkflowController::class, 'storeTransfer'])->name('dentist.cross-role.transfer');
+    Route::post('/dentist/patient/cross-role/{crossRequest}/{decision}', [CrossRolePatientWorkflowController::class, 'respond'])->name('dentist.cross-role.respond');
+    Route::get('/dentist/departments/{department}/units', [DentistPatientController::class, 'getUnitsForDepartment'])->name('dentist.department.units');
+    Route::post('/dentist/patient/invite-unit', [DentistPatientController::class, 'inviteUnit'])->name('dentist.invite.unit');
+    Route::post('/dentist/patient/invites/{invite}/{decision}', [DentistPatientController::class, 'respondInvite'])->name('dentist.invite.respond');
+    Route::post('/dentist/patient/discharge', [DentistPatientController::class, 'discharge'])->name('dentist.patient.discharge');
+    Route::post('/dentist/patient/transfers/{transfer}/{decision}', [DentistPatientController::class, 'respondTransfer'])->name('dentist.patient.transfer.respond');
     Route::get('/dentist/patient/plan/{patient}', [DentistPatientController::class, 'store'])->name('dentist.patients.plan');
     Route::post('/dentist/patient/medication/store', [DentistPatientController::class, 'storeMedication'])->name('medications.store');
     Route::get('/dentist/patient/medication/{id}', [DentistPatientController::class, 'editMedication'])->name('edit_medication');

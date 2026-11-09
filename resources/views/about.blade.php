@@ -4,6 +4,13 @@
 
 @include('navbar')
 
+<section class="public-page-hero">
+    <div class="container position-relative">
+        <span class="eyebrow">About Fandova</span>
+        <h1>Care is better when teams are connected.</h1>
+        <p>We help healthcare professionals communicate clearly, coordinate transitions, and keep patient care moving forward.</p>
+    </div>
+</section>
 
     <!-- About Start -->
     <div class="container-fluid py-5">
@@ -17,19 +24,15 @@
                <div class="col-lg-7">
                     <div class="mb-4">
                         <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">About Us</h5>
-                        <h1 class="display-4">Efficient Healthcare Duty Fandova for Medical Professionals</h1>
+                        <h1 class="display-4">A shared space for continuity of care</h1>
                     </div>
                     <p>
-                       At <b>Healthcare Fandova</b>, we are dedicated to transforming how hospitals, clinics, 
-                       and medical teams manage duty transitions. Our platform simplifies the <b>shift Fandova</b> 
-                       process by enabling doctors, nurses, and other healthcare professionals to communicate and collaborate effectively — anytime, anywhere.
+                       Fandova helps hospitals and clinics coordinate care transitions with a shared digital workspace for doctors, nurses, dentists, and other healthcare professionals.
                     </p>
                     <p>
-                        We understand that <b>patient safety and continuity   </b> of care depend on accurate and timely 
-                        communication between healthcare providers. That’s why our system is built to ensure every <b> detail — from 
-                        patient updates to treatment progress — is clearly documented and securely shared between </b> shifts.With real-time notifications, digital patient records, and structured Fandova templates, we help medical teams stay informed and reduce errors during critical transitions. Whether you’re handing over a ward, department, or individual patient, our platform ensures that the next team starts with complete clarity.
+                        Patient safety and continuity of care depend on timely, accurate communication. Structured handover notes, patient updates, and notifications help the next team understand what has happened and what needs attention.
                     
-                        Our goal is to make hospital operations smoother, safer, and more transparent — allowing medical staff to focus on what truly matters: delivering quality care.
+                        Our goal is to make everyday coordination clearer so healthcare professionals can focus on delivering quality care.
                     </p>
                     <div class="row g-3 pt-3">
                         <div class="col-sm-3 col-6">

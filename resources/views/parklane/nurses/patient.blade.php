@@ -134,6 +134,26 @@ h5 {
                     <!-- App body starts -->
                               <!-- App body starts -->
                               <div class="app-body">
+                                @if($pendingWardTransfers->isNotEmpty())
+                                  <div class="card border-warning mb-3">
+                                    <div class="card-header bg-warning-subtle"><h5 class="card-title mb-0">Ward transfer requests awaiting your approval</h5></div>
+                                    <div class="card-body">
+                                      @foreach($pendingWardTransfers as $transfer)
+                                        <div class="d-flex flex-column flex-md-row justify-content-between gap-3 border-bottom py-3">
+                                          <div>
+                                            <strong>{{ $transfer['patient']->full_name }}</strong>
+                                            <div class="text-muted">From {{ $transfer['details']['source_ward_name'] ?? 'another ward' }} · Requested by {{ $transfer['details']['requester_name'] ?? 'Nurse' }} · {{ $transfer['query']->created_at?->format('d M Y, g:i A') }}</div>
+                                            @if(!empty($transfer['details']['reason']))<div class="mt-1">{{ $transfer['details']['reason'] }}</div>@endif
+                                          </div>
+                                          <div class="d-flex gap-2 align-items-center">
+                                            <form method="POST" action="{{ route('nurse.ward-transfers.respond', [$transfer['query'], 'reject']) }}">@csrf<button class="btn btn-outline-danger">Decline</button></form>
+                                            <form method="POST" action="{{ route('nurse.ward-transfers.respond', [$transfer['query'], 'accept']) }}">@csrf<button class="btn btn-success">Accept transfer</button></form>
+                                          </div>
+                                        </div>
+                                      @endforeach
+                                    </div>
+                                  </div>
+                                @endif
 
                                 <!-- Row starts -->
                                 <div class="row gx-3">
@@ -214,6 +234,9 @@ h5 {
                                                                 <a href="{{ route('nurse.show_patient', $patient->id) }}" class="btn btn-outline-info btn-sm"
                                                                     data-bs-toggle="tooltip" data-bs-placement="top" title="View Dashboard">
                                                                     <i class="ri-eye-line"></i>
+                                                                </a>
+                                                                <a href="{{ route('nurse.patients.edit', $patient) }}" class="btn btn-outline-primary btn-sm" title="Edit patient">
+                                                                    <i class="ri-edit-line"></i>
                                                                 </a>
                                                             </div>
                                                         </td>

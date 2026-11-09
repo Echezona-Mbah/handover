@@ -31,6 +31,10 @@ class AuthenticatedSessionController extends Controller
         // Get the logged-in user
         $user = Auth::user();
 
+        if ($user->nursing_admin_role || $user->nursing_hierarchy_role) {
+            return redirect()->route('admin.nursing.dashboard');
+        }
+
         //dd($user);
     
         // Check the hospital and redirect accordingly

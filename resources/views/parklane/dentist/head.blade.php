@@ -22,6 +22,7 @@
         ************* -->
         {{-- <link rel="stylesheet" href="assets/fonts/remix/remixicon.css"> --}}
         <link rel="stylesheet" href="{{ asset('assets/css/main.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/dentist-portal.css') }}">
 
         <!-- *************
             ************ Vendor Css Files *************
@@ -97,4 +98,4 @@
   </head>
 
  
-  <body>
+  <body class="dentist-portal">

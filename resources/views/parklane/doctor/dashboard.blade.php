@@ -25,7 +25,7 @@
       <div class="app-body">
 
         <div class="row gx-3">
-          <div class="col-xxl-8 col-sm-12">
+          <div class="col-xxl-6 col-sm-12">
             <div class="card mb-3 bg-1">
               <div class="card-body">
 
@@ -100,6 +100,21 @@
                   <h6>Patients</h6>
                 </div>
               </div>
+            </div>
+            <div class="col-xxl-2 col-sm-4">
+              <a href="{{ route('doctor.appointments.index') }}" class="text-decoration-none">
+                <div class="card mb-3 h-100">
+                  <div class="card-body mh-230">
+                    <div class="d-flex flex-column align-items-center">
+                      <div class="icon-box xl bg-info-subtle rounded-5 mb-2 no-shadow">
+                        <i class="ri-calendar-check-line fs-1 text-info"></i>
+                      </div>
+                      <h1 class="text-info">{{ $upcomingAppointmentsCount }}</h1>
+                      <h6 class="text-dark text-center">Upcoming Appointments</h6>
+                    </div>
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
 
