@@ -39,19 +39,15 @@
                   <option>Night</option>
                 </select>
               </div>
-              <div class="col-md-12 mb-3" id="patient-field">
-                <label class="form-label">Patient, if report is patient-specific</label>
-                <select name="patient_id" id="patient-id" class="form-select">
-                  <option value="">Ward or general report</option>
-                  @foreach($patients as $patient)
-                    <option value="{{ $patient->id }}" @selected(old('patient_id') == $patient->id)>{{ $patient->full_name }} - {{ $patient->patient_number ?? $patient->pt_number }}</option>
-                  @endforeach
-                </select>
-              </div>
               <div class="col-md-12 mb-3">
                 <label class="form-label">Report recipients</label>
-                <div class="form-control bg-light">HNS Office and {{ $unitHead?->name ?? 'your assigned unit head' }}</div>
-                <small class="text-muted">Both recipients will receive this report and can accept or decline it.</small>
+                <select name="recipient_target" class="form-select @error('recipient_target') is-invalid @enderror" required>
+                  @if($hasHns)<option value="hns" @selected(old('recipient_target', 'both') === 'hns')>HNS Office only</option>@endif
+                  @if($unitHead)<option value="unit_head" @selected(old('recipient_target') === 'unit_head')>Unit head only: {{ $unitHead->name }}</option>@endif
+                  @if($hasHns && $unitHead)<option value="both" @selected(old('recipient_target', 'both') === 'both')>Both HNS Office and unit head</option>@endif
+                </select>
+                @error('recipient_target')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                <small class="text-muted">Choose the HNS Office, your unit head, or both. Each recipient can accept or decline.</small>
               </div>
               <div class="col-md-12 mb-3" id="involved-nurses-field" hidden>
                 <label class="form-label">Nurses involved in the incident</label>
@@ -64,12 +60,8 @@
                 @error('involved_nurse_ids.*')<div class="text-danger">{{ $message }}</div>@enderror
               </div>
               <div class="col-12 mb-3" id="summary-field">
-                <label class="form-label" id="summary-label">Original Nursing Summary</label>
+                <label class="form-label" id="summary-label">Nursing Summary</label>
                 <textarea name="summary" id="summary" rows="5" class="form-control">{{ old('summary') }}</textarea>
-              </div>
-              <div class="col-12 mb-3" id="patient-notes-field" hidden>
-                <label class="form-label">Patient-specific Nursing Notes</label>
-                <textarea name="incidents" id="incidents" rows="4" class="form-control">{{ old('incidents') }}</textarea>
               </div>
               <div class="col-md-6 mb-3" id="referrals-field">
                 <label class="form-label">Referrals or Follow-up</label>
@@ -93,13 +85,9 @@
 @include('parklane.nurses.script')
 <script>
   const reportType = document.getElementById('report-type');
-  const patientId = document.getElementById('patient-id');
-  const patientField = document.getElementById('patient-field');
   const summaryField = document.getElementById('summary-field');
   const summary = document.getElementById('summary');
   const summaryLabel = document.getElementById('summary-label');
-  const patientNotesField = document.getElementById('patient-notes-field');
-  const patientNotes = document.getElementById('incidents');
   const involvedNursesField = document.getElementById('involved-nurses-field');
   const involvedNurses = document.getElementById('involved-nurse-ids');
   const referralsField = document.getElementById('referrals-field');
@@ -108,22 +96,15 @@
   const updateReportFields = () => {
     const type = reportType.value;
     const isIncident = type === 'incident';
-    const isPatientSpecific = !isIncident && patientId.value !== '';
 
-    patientField.hidden = isIncident;
-    if (isIncident) patientId.value = '';
     involvedNursesField.hidden = !isIncident;
     involvedNurses.required = isIncident;
-    summaryField.hidden = isPatientSpecific;
-    summary.required = !isPatientSpecific;
-    summaryLabel.textContent = isIncident ? 'Incident Details' : 'Original Nursing Summary';
-    patientNotesField.hidden = !isPatientSpecific;
-    patientNotes.required = isPatientSpecific;
-    referralsField.hidden = isPatientSpecific || type !== 'referral';
-    administrativeNotesField.hidden = isPatientSpecific || type !== 'administrative';
+    summary.required = true;
+    summaryLabel.textContent = isIncident ? 'Incident Details' : 'Nursing Summary';
+    referralsField.hidden = type !== 'referral';
+    administrativeNotesField.hidden = type !== 'administrative';
   };
 
   reportType.addEventListener('change', updateReportFields);
-  patientId.addEventListener('change', updateReportFields);
   updateReportFields();
 </script>

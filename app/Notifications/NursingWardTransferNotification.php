@@ -15,6 +15,8 @@ class NursingWardTransferNotification extends Notification
         private readonly string $title,
         private readonly string $message,
         private readonly int $patientId,
+        private readonly ?string $senderName = null,
+        private readonly ?string $wardName = null,
     ) {}
 
     public function via(object $notifiable): array
@@ -27,6 +29,9 @@ class NursingWardTransferNotification extends Notification
         return [
             'title' => $this->title,
             'message' => $this->message,
+            'sender_name' => $this->senderName ?? 'Nursing staff',
+            'ward_name' => $this->wardName ?? 'Unknown ward',
+            'detail' => 'Patient ID: '.$this->patientId,
             'patient_id' => $this->patientId,
             'url' => route('nurse.patient'),
         ];
@@ -39,7 +44,9 @@ class NursingWardTransferNotification extends Notification
         return (new MailMessage)
             ->subject($this->title)
             ->greeting('Hello '.$name.',')
+            ->line('From: '.($this->senderName ?? 'Nursing staff').' · Ward: '.($this->wardName ?? 'Unknown ward'))
             ->line($this->message)
+            ->line('Patient ID: '.$this->patientId)
             ->action('Open ward patients', route('nurse.patient'));
     }
 }

@@ -66,6 +66,7 @@
     <!-- Custom JS files -->
     <script src="{{asset('assets/js/custom.js')}}"></script>
     @include('partials.password-visibility')
+    @include('partials.medication-suggestions')
   </body>
 
 

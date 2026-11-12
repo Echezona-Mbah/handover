@@ -9,7 +9,10 @@ class NursingAdministrationAdded extends Notification
 {
     use Queueable;
 
-    public function __construct(private readonly string $administrationName) {}
+    public function __construct(
+        private readonly string $administrationName,
+        private readonly string $senderName = 'Hospital administration',
+    ) {}
 
     public function via(object $notifiable): array
     {
@@ -21,7 +24,9 @@ class NursingAdministrationAdded extends Notification
         return [
             'title' => 'New nursing administration available',
             'message' => $this->administrationName.' is now available when submitting a nursing report.',
-            'sender_name' => 'Hospital administration',
+            'sender_name' => $this->senderName,
+            'ward_name' => $notifiable->ward?->name ?? 'Hospital-wide',
+            'detail' => 'Nursing administration available for reports.',
             'administration_name' => $this->administrationName,
         ];
     }

@@ -72,7 +72,7 @@ class NursingStatisticController extends Controller
                 'nurse_id' => $nurse->id,
             ]);
 
-            $notification = new NursingStatisticSubmitted($statistic->load(['nurse', 'ward']));
+            $notification = new NursingStatisticSubmitted($statistic->load(['nurse.ward', 'ward']));
             Nurses::where('hospital_id', $nurse->hospital_id)
                 ->where('ward_id', $wardId)
                 ->get()

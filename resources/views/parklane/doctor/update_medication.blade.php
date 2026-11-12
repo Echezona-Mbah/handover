@@ -155,7 +155,7 @@ h5 {
                                           <div class="col-xxl-3 col-lg-4 col-sm-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="a1">Medication Name<span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="a1" name="medication" placeholder="Enter Medication Name" value="{{ old('medication',  $medication->medication) }}" >
+                                                <input type="text" class="form-control medication-name-input" data-suggestions-url="{{ route('doctor.medication-suggestions') }}" id="a1" name="medication" placeholder="Enter Medication Name" value="{{ old('medication',  $medication->medication) }}" >
                                             </div>
                                           </div>
 

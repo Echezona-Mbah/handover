@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Nurse;
 use App\Http\Controllers\Controller;
 use App\Models\NursingReport;
 use App\Models\Nurses;
-use App\Models\Patient;
 use App\Models\User;
 use App\Notifications\NursingReportSubmitted;
 use App\Services\NursingHierarchy;
@@ -28,38 +27,29 @@ class NursingReportController extends Controller
     public function create()
     {
         $nurse = Auth::guard('nurse')->user();
-        $patients = Patient::where('hospital_id', $nurse->hospital_id)
-            ->where('ward_id', $nurse->ward_id)
-            ->orderBy('full_name')
-            ->get();
         $involvedNurses = Nurses::where('hospital_id', $nurse->hospital_id)
             ->where('ward_id', $nurse->ward_id)
             ->orderBy('full_name')
             ->get();
 
         $unitHead = $nurse->ward?->unitHead;
+        $hasHns = User::where('hospital_id', $nurse->hospital_id)
+            ->get()
+            ->contains(fn (User $user) => NursingHierarchy::isHns($user));
 
-        return view('parklane.nurses.digital_reports.create', compact('patients', 'involvedNurses', 'unitHead'));
+        return view('parklane.nurses.digital_reports.create', compact('involvedNurses', 'unitHead', 'hasHns'));
     }
 
     public function store(Request $request)
     {
         $nurse = Auth::guard('nurse')->user();
         $isIncident = $request->input('report_type') === 'incident';
-        $isPatientSpecific = ! $isIncident && filled($request->input('patient_id'));
-        $isSummaryRequired = ! $isPatientSpecific;
         $validated = $request->validate([
-            'patient_id' => [
-                'nullable',
-                \Illuminate\Validation\Rule::exists('patients', 'id')->where(fn ($query) => $query
-                    ->where('hospital_id', $nurse->hospital_id)
-                    ->where('ward_id', $nurse->ward_id)),
-            ],
             'report_type' => ['required', \Illuminate\Validation\Rule::in(['daily_shift', 'incident', 'administrative', 'referral'])],
             'report_date' => 'required|date',
             'shift' => 'nullable|string|max:50',
-            'summary' => [$isSummaryRequired ? 'required' : 'nullable', 'string'],
-            'incidents' => [$isPatientSpecific ? 'required' : 'nullable', 'string'],
+            'summary' => ['required', 'string'],
+            'incidents' => ['nullable', 'string'],
             'referrals' => 'nullable|string',
             'administrative_notes' => 'nullable|string',
             'involved_nurse_ids' => [$isIncident ? 'required' : 'nullable', 'array', $isIncident ? 'min:1' : 'min:0'],
@@ -69,13 +59,16 @@ class NursingReportController extends Controller
                     ->where('hospital_id', $nurse->hospital_id)
                     ->where('ward_id', $nurse->ward_id)),
             ],
+            'recipient_target' => ['required', \Illuminate\Validation\Rule::in(['hns', 'unit_head', 'both'])],
         ]);
         $unitHead = $nurse->ward?->unitHead;
-        abort_unless($unitHead, 422, 'Your ward must have an assigned unit head before submitting a report.');
         $hnsRecipients = User::where('hospital_id', $nurse->hospital_id)
             ->get()
             ->filter(fn (User $user) => NursingHierarchy::isHns($user));
-        abort_unless($hnsRecipients->isNotEmpty(), 422, 'No HNS Office account is configured for your hospital.');
+        $recipientTarget = $validated['recipient_target'];
+        abort_unless($recipientTarget === 'hns' || $recipientTarget === 'unit_head' || ($hnsRecipients->isNotEmpty() && $unitHead), 422, 'Your hospital must have an HNS account and unit head to send to both.');
+        abort_unless($recipientTarget !== 'hns' || $hnsRecipients->isNotEmpty(), 422, 'No HNS Office account is configured for your hospital.');
+        abort_unless($recipientTarget !== 'unit_head' || $unitHead, 422, 'Your ward has no assigned unit head.');
 
         if ($isIncident) {
             $names = Nurses::where('hospital_id', $nurse->hospital_id)
@@ -88,12 +81,10 @@ class NursingReportController extends Controller
             $validated['patient_id'] = null;
             $validated['referrals'] = null;
             $validated['administrative_notes'] = null;
-        } elseif ($isPatientSpecific) {
-            $validated['summary'] = 'Patient-specific nursing report';
-            $validated['referrals'] = null;
-            $validated['administrative_notes'] = null;
         } else {
-            $validated['incidents'] = null;
+            if (! $isIncident) {
+                $validated['incidents'] = null;
+            }
             if ($validated['report_type'] !== 'referral') {
                 $validated['referrals'] = null;
             }
@@ -109,19 +100,32 @@ class NursingReportController extends Controller
         $validated['status'] = 'submitted';
         $validated['submitted_at'] = now();
         $validated['recipient_type'] = 'user';
-        $validated['recipient_role'] = 'hns_and_unit_head';
-        $validated['recipient_id'] = $unitHead->id;
+        $validated['recipient_role'] = match ($recipientTarget) {
+            'hns' => 'hns',
+            'unit_head' => 'unit_head',
+            default => 'hns_and_unit_head',
+        };
+        $validated['recipient_id'] = $recipientTarget === 'hns' ? $hnsRecipients->first()->id : $unitHead->id;
         $validated['target_admin_role'] = null;
+        unset($validated['recipient_target']);
 
         $report = NursingReport::create($validated);
 
         $report->load('nurse');
-        $recipients = $hnsRecipients->push($unitHead)->unique('id');
+        $recipients = match ($recipientTarget) {
+            'hns' => $hnsRecipients,
+            'unit_head' => collect([$unitHead]),
+            default => $hnsRecipients->push($unitHead)->unique('id'),
+        };
         $recipients->each(fn (User $admin) => $admin->notify(new NursingReportSubmitted($report)));
         NursingHierarchy::audit($nurse, 'report_submitted', $report, ['recipient_role' => $validated['recipient_role'], 'recipient_id' => $validated['recipient_id']]);
 
         return redirect()->route('nurse.reports.show', $report)
-            ->with('success', 'Nursing report submitted to both the HNS Office and your unit head.');
+            ->with('success', 'Nursing report sent to '.match ($recipientTarget) {
+                'hns' => 'the HNS Office.',
+                'unit_head' => 'your unit head.',
+                default => 'the HNS Office and your unit head.',
+            });
     }
 
     public function show(NursingReport $report)

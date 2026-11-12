@@ -155,8 +155,11 @@ class PatientController extends Controller
                 ->whereIn('nursing_hierarchy_role', ['ward_supervision', 'ward_supervisor']))
             ->orderBy('name')
             ->get();
+        $hasHns = User::where('hospital_id', $nurse->hospital_id)
+            ->get()
+            ->contains(fn (User $user) => NursingHierarchy::isHns($user));
 
-        return view('parklane.nurses.show_patient', compact('patient', 'medications', 'handoverNotes', 'nursingReports', 'nursingProcessRecords', 'transferWards'));
+        return view('parklane.nurses.show_patient', compact('patient', 'medications', 'handoverNotes', 'nursingReports', 'nursingProcessRecords', 'transferWards', 'hasHns'));
     }
 
     public function dischargePatient(Request $request, Patient $patient): RedirectResponse
@@ -235,7 +238,9 @@ class PatientController extends Controller
         $supervisor->notify(new NursingWardTransferNotification(
             'Patient transfer awaiting approval',
             $nurse->full_name.' requested to transfer '.$patient->full_name.' from '.$patient->ward?->name.' to '.$destinationWard->name.'.',
-            $patient->id
+            $patient->id,
+            $nurse->full_name,
+            $patient->ward?->name,
         ));
 
         return back()->with('success', 'Transfer request sent. The patient will remain in this ward until the receiving ward supervisor accepts.');
@@ -298,7 +303,9 @@ class PatientController extends Controller
         $sourceNurse?->notify(new NursingWardTransferNotification(
             $decision === 'accept' ? 'Ward transfer accepted' : 'Ward transfer declined',
             $nurse->full_name.' '.($decision === 'accept' ? 'accepted' : 'declined').' the transfer request for '.$details['patient_name'].'.',
-            (int) $details['patient_id']
+            (int) $details['patient_id'],
+            $nurse->full_name,
+            $nurse->ward?->name,
         ));
 
         return back()->with('success', $decision === 'accept'
@@ -370,26 +377,43 @@ class PatientController extends Controller
         );
 
         $unitHead = $nurse->ward?->unitHead;
-        abort_unless($unitHead, 422, 'Your ward must have an assigned unit head before submitting a report.');
         $hnsRecipients = User::where('hospital_id', $nurse->hospital_id)
             ->get()
             ->filter(fn (User $user) => NursingHierarchy::isHns($user));
-        abort_unless($hnsRecipients->isNotEmpty(), 422, 'No HNS Office account is configured for your hospital.');
+        $validated = $request->validate([
+            'recipient_target' => ['required', Rule::in(['hns', 'unit_head', 'both'])],
+        ]);
+        $recipientTarget = $validated['recipient_target'];
+        abort_unless($recipientTarget === 'hns' || $unitHead, 422, 'Your ward has no assigned unit head.');
+        abort_unless($recipientTarget === 'unit_head' || $hnsRecipients->isNotEmpty(), 422, 'No HNS Office account is configured for your hospital.');
+        abort_unless($recipientTarget !== 'both' || $unitHead, 422, 'Your ward has no assigned unit head.');
 
         $report->update([
             'recipient_type' => 'user',
-            'recipient_id' => $unitHead->id,
-            'recipient_role' => 'hns_and_unit_head',
+            'recipient_id' => $recipientTarget === 'hns' ? $hnsRecipients->first()->id : $unitHead->id,
+            'recipient_role' => match ($recipientTarget) {
+                'hns' => 'hns',
+                'unit_head' => 'unit_head',
+                default => 'hns_and_unit_head',
+            },
             'target_admin_role' => null,
             'status' => 'submitted',
             'submitted_at' => now(),
         ]);
         $report->load('nurse');
 
-        $recipients = $hnsRecipients->push($unitHead)->unique('id');
+        $recipients = match ($recipientTarget) {
+            'hns' => $hnsRecipients,
+            'unit_head' => collect([$unitHead]),
+            default => $hnsRecipients->push($unitHead)->unique('id'),
+        };
         $recipients->each(fn ($recipient) => $recipient->notify(new NursingReportSubmitted($report)));
 
-        return back()->with('success', 'Patient report sent to both the HNS Office and your unit head.');
+        return back()->with('success', 'Patient report sent to '.match ($recipientTarget) {
+            'hns' => 'the HNS Office.',
+            'unit_head' => 'your unit head.',
+            default => 'the HNS Office and your unit head.',
+        });
     }
 
     private function activeWardPatient(Patient $patient, object $nurse): Patient

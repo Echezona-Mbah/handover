@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Hospital;
+use App\Notifications\AdminPasswordResetNotification;
 
 class User extends Authenticatable
 {
@@ -28,6 +29,11 @@ class User extends Authenticatable
         'nursing_hierarchy_role',
         'profile_picture',
     ];
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new AdminPasswordResetNotification($token));
+    }
 
     /**
      * The attributes that should be hidden for serialization.

@@ -90,6 +90,30 @@ class NuresController extends Controller
         return view('parklane.nurses_list', compact('nurses'));
     }
 
+    public function resendPasswordSetupLink(int $id)
+    {
+        $actor = Auth::user();
+        abort_unless($actor->hospital_id, 403, 'Your administrator account is not assigned to a hospital.');
+
+        $nurse = Nurses::where('hospital_id', $actor->hospital_id)->findOrFail($id);
+        if (\App\Services\NursingHierarchy::canManageNursingDirectory($actor)) {
+            abort_unless(
+                in_array((int) $nurse->ward_id, \App\Services\NursingHierarchy::wardsFor($actor), true),
+                403
+            );
+        }
+
+        $status = Password::broker('nurses')->sendResetLink(['email' => $nurse->email]);
+        if ($status === Password::RESET_THROTTLED) {
+            return back()->with('error', 'A password setup link was sent recently. Please wait before requesting another.');
+        }
+        if ($status !== Password::RESET_LINK_SENT) {
+            return back()->with('error', 'The password setup email could not be sent. Please try again.');
+        }
+
+        return back()->with('success', 'A new password setup link was emailed to '.$nurse->email.'.');
+    }
+
     public function updateHierarchyRole(Request $request, int $id)
     {
         $validated = $request->validate([

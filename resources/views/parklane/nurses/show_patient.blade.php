@@ -104,10 +104,17 @@
                     </div>
                   </div>
                 </form>
-                <form method="POST" action="{{ route('nurse.patient-reports.send', $report) }}" class="mt-2 d-flex flex-wrap justify-content-end gap-2">
+                <form method="POST" action="{{ route('nurse.patient-reports.send', $report) }}" class="mt-2 d-flex flex-wrap align-items-end justify-content-end gap-2">
                   @csrf
-                  <span class="align-self-center text-muted">Will be sent to HNS Office and {{ $patient->ward?->unitHead?->name ?? 'your unit head' }}.</span>
-                  <button class="btn btn-success">Send to both</button>
+                  <div>
+                    <label class="form-label" for="recipient-target-{{ $report->id }}">Send to</label>
+                    <select class="form-select" name="recipient_target" id="recipient-target-{{ $report->id }}" required>
+                      @if($hasHns)<option value="hns">HNS Office only</option>@endif
+                      @if($patient->ward?->unitHead)<option value="unit_head">Unit head only: {{ $patient->ward->unitHead->name }}</option>@endif
+                      @if($hasHns && $patient->ward?->unitHead)<option value="both">Both HNS Office and unit head</option>@endif
+                    </select>
+                  </div>
+                  <button class="btn btn-success">Send report</button>
                 </form>
               @else
                 <p class="mt-2 mb-2 text-break">{{ $report->summary }}</p>

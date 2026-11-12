@@ -18,7 +18,7 @@
                   <option value="{{ $ward->id }}" @selected(in_array($ward->id, old('ward_ids', [])))>{{ $ward->name }}</option>
                 @endforeach
               </select>
-              <small class="text-muted">Select one or more wards. Nurses in each selected ward and its nursing unit head receive an in-app notification and an email.</small>
+              <small class="text-muted">Select one or more wards. Nurses in each selected ward and its unit head receive an in-app notification and an email with your name, home ward, and the statistics summary.</small>
               @error('ward_ids')<div class="invalid-feedback">{{ $message }}</div>@enderror
               @error('ward_ids.*')<div class="text-danger">{{ $message }}</div>@enderror
             </div>

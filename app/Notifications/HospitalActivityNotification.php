@@ -31,6 +31,7 @@ class HospitalActivityNotification extends Notification
             'title' => $this->title,
             'message' => $this->message,
             'sender_name' => $this->senderName,
+            'ward_name' => $notifiable->ward?->name ?? 'Hospital-wide',
             'url' => $this->url,
             'urgent' => $this->urgent,
             'urgency' => $this->urgency,
@@ -42,6 +43,7 @@ class HospitalActivityNotification extends Notification
         $mail = (new MailMessage)
             ->subject($this->title)
             ->greeting('Hello '.$notifiable->full_name.',')
+            ->line('Ward: '.($notifiable->ward?->name ?? 'Hospital-wide'))
             ->line($this->urgent ? 'URGENT: '.$this->message : $this->message);
 
         if ($this->url) {

@@ -21,6 +21,7 @@
             <p><strong>Date:</strong> {{ $report->report_date?->format('d M Y') }} | <strong>Shift:</strong> {{ $report->shift ?? 'N/A' }}</p>
             <p><strong>Sent to:</strong>
               @if($report->recipient_role === 'hns_and_unit_head') HNS Office and assigned unit head
+              @elseif($report->recipient_role === 'hns') HNS Office
               @elseif($report->recipient_role === 'unit_head') Assigned unit head
               @else Historical recipient @endif
             </p>

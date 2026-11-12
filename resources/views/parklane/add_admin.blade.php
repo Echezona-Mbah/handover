@@ -33,6 +33,9 @@
                                 @if (session('success'))
                                     <div class="alert alert-success">{{ session('success') }}</div>
                                 @endif
+                                @if (session('error'))
+                                    <div class="alert alert-danger">{{ session('error') }}</div>
+                                @endif
 
                                 <form action="{{ route('store_admin_user') }}" method="POST">
                                     @csrf
@@ -213,6 +216,14 @@
                                                         @endif
                                                     </td>
                                                     <td class="text-end">
+                                                        @if((int) $manager->hospital_id === (int) auth()->user()->hospital_id)
+                                                            <form action="{{ route('admin_user.password-setup-link', $manager) }}" method="POST" class="d-inline">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Resend password setup link">
+                                                                    <i class="ri-mail-send-line"></i><span class="visually-hidden">Resend password setup link</span>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                         <form action="{{ route('admin_user.destroy', $manager) }}" method="POST"
                                                             onsubmit="return confirm('Remove this manager?');" class="d-inline">
                                                             @csrf

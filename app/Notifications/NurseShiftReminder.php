@@ -32,6 +32,7 @@ class NurseShiftReminder extends Notification
             'title' => 'Shift reminder: '.$this->rosterTitle,
             'message' => $this->message(),
             'sender_name' => 'Hospital roster',
+            'ward_name' => $notifiable->ward?->name ?? 'Unassigned ward',
             'url' => $this->url,
             'assignment_id' => $this->assignmentId,
         ];
@@ -42,6 +43,7 @@ class NurseShiftReminder extends Notification
         return (new MailMessage)
             ->subject('Shift reminder: '.$this->rosterTitle)
             ->greeting('Hello '.$notifiable->full_name.',')
+            ->line('Ward: '.($notifiable->ward?->name ?? 'Unassigned ward'))
             ->line($this->message())
             ->action('View your roster', $this->url)
             ->salutation('Regards, Hospital roster');

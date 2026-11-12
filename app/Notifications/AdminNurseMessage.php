@@ -31,6 +31,7 @@ class AdminNurseMessage extends Notification
             'message' => $this->message,
             'sender_name' => $this->senderName,
             'sender_id' => $this->senderId,
+            'ward_name' => $notifiable->ward?->name ?? 'Unassigned ward',
             'requires_acknowledgement' => $this->requiresAcknowledgement,
         ];
     }
@@ -40,6 +41,7 @@ class AdminNurseMessage extends Notification
         $mail = (new MailMessage)
             ->subject('Admin notification: '.$this->title)
             ->greeting('Hello '.$notifiable->full_name.',')
+            ->line('Ward: '.($notifiable->ward?->name ?? 'Unassigned ward'))
             ->line($this->message);
 
         if ($this->requiresAcknowledgement) {

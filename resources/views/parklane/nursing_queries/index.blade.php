@@ -18,7 +18,9 @@
     <div class="app-container">
       <div class="app-hero-header d-flex align-items-center">
         <ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ auth('nurse')->check() ? route('nurse.dashboard') : route('admin.nursing.dashboard') }}">Dashboard</a></li><li class="breadcrumb-item text-primary">Nursing Queries</li></ol>
-        <a class="btn btn-primary ms-auto" href="{{ route($routePrefix.'.create') }}">New query</a>
+        @unless(auth('nurse')->check())
+          <a class="btn btn-primary ms-auto" href="{{ route($routePrefix.'.create') }}">New query</a>
+        @endunless
       </div>
       <div class="app-body">
         @if(session('success'))<div class="alert alert-success">{{ session('success') }}</div>@endif

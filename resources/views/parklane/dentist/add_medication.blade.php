@@ -62,9 +62,8 @@
               <div class="row g-3">
                 <div class="col-md-6">
                   <label for="medication" class="form-label">Medication <span class="text-danger">*</span></label>
-                  <input id="medication" name="medication" type="text" maxlength="255" required
-                    value="{{ old('medication') }}" placeholder="Medication name"
-                    class="form-control @error('medication') is-invalid @enderror">
+                  <input id="medication" name="medication" type="text" class="medication-name-input form-control @error('medication') is-invalid @enderror" data-suggestions-url="{{ route('dentist.medication-suggestions') }}" maxlength="255" required
+                    value="{{ old('medication') }}" placeholder="Medication name">
                   @error('medication') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
                 <div class="col-md-6">

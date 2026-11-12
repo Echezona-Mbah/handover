@@ -91,7 +91,8 @@ class NursingHierarchy
         if (self::isControl($actor)) return $query->whereIn('id', []);
         $type = self::type($actor);
         return $query->where(function (Builder $q) use ($actor, $type) {
-            $q->where(fn (Builder $q) => $q->where('recipient_type', $type)->where('recipient_id', $actor->id));
+            $q->where(fn (Builder $q) => $q->where('recipient_type', $type)
+                ->where('recipient_id', $actor->id));
             if (self::role($actor) === 'unit_head') {
                 $q->orWhereIn('ward_id', self::wardsFor($actor));
             }

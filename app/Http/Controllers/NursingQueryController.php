@@ -24,6 +24,7 @@ class NursingQueryController extends Controller
     }
     public function create()
     {
+        abort_unless(Auth::guard('nurse')->guest(), 403, 'Nurses cannot send nursing queries.');
         $actor = $this->actor();
         $recipients = NursingHierarchy::queryableRecipients($actor);
 
@@ -31,6 +32,7 @@ class NursingQueryController extends Controller
     }
 
     public function store(Request $request) {
+        abort_unless(Auth::guard('nurse')->guest(), 403, 'Nurses cannot send nursing queries.');
         $actor = $this->actor();
         $data = $request->validate([
             'recipient' => 'required|string',

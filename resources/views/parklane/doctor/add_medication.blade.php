@@ -138,7 +138,7 @@
                         <div class="col-xxl-3 col-lg-4 col-sm-6">
                           <div class="mb-3">
                             <label class="form-label">Medication Name<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control medication-input" name="medication[]" placeholder="Enter medication name" autocomplete="off">
+                            <input type="text" class="form-control medication-input" data-suggestions-url="{{ route('doctor.medication-suggestions') }}" name="medication[]" placeholder="Enter medication name" autocomplete="off">
                             <div class="list-group suggestions-box"></div>
                           </div>
                         </div>
@@ -329,7 +329,9 @@
         }
 
         timeout = setTimeout(() => {
-          fetch(`https://api.datamuse.com/sug?s=${encodeURIComponent(query)}`)
+          const url = new URL(input.dataset.suggestionsUrl, window.location.origin);
+          url.searchParams.set('q', query);
+          fetch(url, {headers: {'Accept': 'application/json'}})
             .then(response => {
               if (!response.ok) {
                 throw new Error('Suggestion request failed');
@@ -337,29 +339,27 @@
               return response.json();
             })
             .then(data => {
-              let list = '';
-
               if (!data.length) {
-                suggestionsBox.innerHTML = '';
+                suggestionsBox.replaceChildren();
                 return;
               }
 
+              suggestionsBox.replaceChildren();
               data.forEach(item => {
-                list += `<button type="button" class="list-group-item list-group-item-action suggestion-item">${item.word}</button>`;
-              });
-
-              suggestionsBox.innerHTML = list;
-
-              suggestionsBox.querySelectorAll('.suggestion-item').forEach(button => {
-                button.addEventListener('click', function () {
-                  input.value = this.textContent;
-                  suggestionsBox.innerHTML = '';
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'list-group-item list-group-item-action suggestion-item';
+                button.textContent = item;
+                button.addEventListener('click', () => {
+                  input.value = item;
+                  suggestionsBox.replaceChildren();
                 });
+                suggestionsBox.appendChild(button);
               });
             })
             .catch(error => {
               console.error('Medication suggestion error:', error);
-              suggestionsBox.innerHTML = '';
+              suggestionsBox.replaceChildren();
             });
         }, 300);
       });

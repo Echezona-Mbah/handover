@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rule;
 use App\Services\NursingHierarchy;
 
@@ -137,7 +138,7 @@ class SubadminController extends Controller
             $administrationName = $this->nursingRoleLabel($adminArea).' Administration';
 
             Nurses::where('hospital_id', $manager->hospital_id)
-                ->each(fn (Nurses $nurse) => $nurse->notify(new NursingAdministrationAdded($administrationName)));
+                ->each(fn (Nurses $nurse) => $nurse->notify(new NursingAdministrationAdded($administrationName, auth()->user()->name)));
         }
 
         return redirect()->route('add_admin_user')->with('success', 'Admin account added.');
@@ -194,6 +195,26 @@ class SubadminController extends Controller
             'recentReports',
             'recentQueries',
         ));
+    }
+
+    public function resendPasswordSetupLink(User $user)
+    {
+        $actor = auth()->user();
+        abort_unless($actor->hospital_id, 403, 'Your administrator account is not assigned to a hospital.');
+        abort_unless(
+            (int) $actor->hospital_id === (int) $user->hospital_id && ! $user->isSuperAdmin(),
+            404
+        );
+
+        $status = Password::broker('users')->sendResetLink(['email' => $user->email]);
+        if ($status === Password::RESET_THROTTLED) {
+            return back()->with('error', 'A password setup link was sent recently. Please wait before requesting another.');
+        }
+        if ($status !== Password::RESET_LINK_SENT) {
+            return back()->with('error', 'The password setup email could not be sent. Please try again.');
+        }
+
+        return back()->with('success', 'A new password setup link was emailed to '.$user->email.'.');
     }
 
     public function destroy(User $user)

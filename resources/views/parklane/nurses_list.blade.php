@@ -76,6 +76,8 @@
                     <!-- App body starts -->
      <!-- App body starts -->
      <div class="app-body">
+        @if(session('success'))<div class="alert alert-success">{{ session('success') }}</div>@endif
+        @if(session('error'))<div class="alert alert-danger">{{ session('error') }}</div>@endif
 
         <!-- Row starts -->
         <div class="row gx-3">
@@ -133,6 +135,12 @@
                                   
                                   <td>
                                       <div class="d-inline-flex gap-1">
+                                        <form action="{{ route('nurses.password-setup-link', $nurse->id) }}" method="POST" class="d-inline">
+                                          @csrf
+                                          <button type="submit" class="btn btn-outline-warning btn-sm" title="Resend password setup link">
+                                            <i class="ri-mail-send-line"></i><span class="visually-hidden">Resend password setup link</span>
+                                          </button>
+                                        </form>
                                         <form id="delete-doctor-form-{{ $nurse->id }}" action="{{ route('nurse.destroy', $nurse->id) }}" method="POST" class="d-inline delete-doctor-form">
                                             @csrf
                                             @method('DELETE')

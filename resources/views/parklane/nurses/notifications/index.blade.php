@@ -40,6 +40,7 @@
                     </h6>
                     @if ($isUrgent)<span class="badge bg-danger mb-2">URGENT</span>@endif
                     <p class="mb-2">{{ $notificationData['message'] ?? '' }}</p>
+                    @if(!empty($notificationData['detail']))<p class="mb-2">{{ $notificationData['detail'] }}</p>@endif
                     @if ($urgency === 'urgent')
                       <span class="badge bg-warning text-dark">Patient urgency: Urgent</span>
                     @elseif ($urgency === 'emergency')
@@ -47,6 +48,7 @@
                     @endif
                     <p class="small text-muted mb-0">
                       From {{ $notificationData['sender_name'] ?? 'Administrator' }}
+                      · Ward: {{ $notificationData['ward_name'] ?? 'Hospital-wide' }}
                       · {{ $notification->created_at->format('M j, Y g:i A') }}
                     </p>
                   </div>

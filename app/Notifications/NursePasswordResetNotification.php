@@ -29,7 +29,7 @@ class NursePasswordResetNotification extends Notification
             ->greeting('Hello '.($notifiable->full_name ?? 'Nurse').',')
             ->line('Your nurse account has been created.')
             ->line('Login email: '.$notifiable->getEmailForPasswordReset())
-            ->line('Use the secure link below to set or reset your password. This link expires in 60 minutes and can only be used once.')
+            ->line('Use the secure link below to set or reset your password. This link expires in 2 days and can only be used once.')
             ->action('Set up password', $url)
             ->line('If you did not expect this account, please contact your hospital administrator.');
     }

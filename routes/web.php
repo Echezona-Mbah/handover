@@ -43,6 +43,7 @@ use App\Http\Controllers\Nurse\NursingProcessController;
 use App\Http\Controllers\Nurse\NursingRosterController;
 use App\Http\Controllers\Nurse\NursingStatisticController;
 use App\Http\Controllers\NursingQueryController;
+use App\Http\Controllers\MedicationSuggestionController;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -146,6 +147,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/add_admin_user', [SubadminController::class, 'create'])->name('add_admin_user');
         Route::post('/add_admin_user', [SubadminController::class, 'store'])->name('store_admin_user');
         Route::get('/admin_user_list', [SubadminController::class, 'index'])->name('admin_user_list');
+        Route::post('/admin_user/{user}/password-setup-link', [SubadminController::class, 'resendPasswordSetupLink'])->name('admin_user.password-setup-link');
         Route::get('/admin_user/{user}', [SubadminController::class, 'show'])->name('admin_user.show');
         Route::delete('/admin_user/{user}', [SubadminController::class, 'destroy'])->name('admin_user.destroy');
 
@@ -195,6 +197,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/add_nurse', [NuresController::class, 'createNurse'])->name('add_nurse');
     Route::post('/add_nurse', [NuresController::class, 'storeNurse'])->name('storeNurse.add_nurse');
     Route::get('/nurse_list', [NuresController::class, 'showNurseList'])->name('nurse_list');
+    Route::post('/nurses/{id}/password-setup-link', [NuresController::class, 'resendPasswordSetupLink'])->name('nurses.password-setup-link');
     Route::patch('/nurses/{id}/hierarchy-role', [NuresController::class, 'updateHierarchyRole'])->name('nurses.hierarchy-role.update');
     Route::get('/show_nurse/{id}', [NuresController::class, 'showNures'])->name('nurse.showew');
     Route::delete('/show_nurse/{nurse}', [NuresController::class, 'destroyNurse'])->name('nurse.destroy');
@@ -301,6 +304,7 @@ Route::post('/doctor/reset-password', [DoctorForgotPasswordController::class, 'r
 //  Route::get('/news', [DoctorNewsController::class, 'show'])->name('news');
 //    Route::get('/news/{id}', [DoctorNewsController::class, 'showSingle'])->name('news.show');
 Route::middleware(['doctor.auth', 'doctor.activity'])->group(function () {
+    Route::get('/doctor/medication-suggestions', MedicationSuggestionController::class)->name('doctor.medication-suggestions');
      Route::get('/doctor/news', [DoctorNewsController::class, 'show'])->name('doctor.news');
    Route::get('/doctor/news/{id}', [DoctorNewsController::class, 'showSingle'])->name('news.show');
 
@@ -388,9 +392,8 @@ Route::get('/nurse/reset-password/{token}', [NursePasswordController::class, 'sh
 Route::post('/nurse/reset-password', [NursePasswordController::class, 'resetPassword'])->name('nurse.password.reset.submit');
 
 Route::middleware(['authNurse'])->group(function () {
+    Route::get('/nurse/medication-suggestions', MedicationSuggestionController::class)->name('nurse.medication-suggestions');
     Route::get('/nurse/queries', [NursingQueryController::class, 'index'])->name('nurse.queries.index');
-    Route::get('/nurse/queries/create', [NursingQueryController::class, 'create'])->name('nurse.queries.create');
-    Route::post('/nurse/queries', [NursingQueryController::class, 'store'])->name('nurse.queries.store');
     Route::post('/nurse/queries/{query}/respond', [NursingQueryController::class, 'respond'])->name('nurse.queries.respond');
     Route::post('/nurse/queries/{query}/close', [NursingQueryController::class, 'close'])->name('nurse.queries.close');
     Route::post('/nurse/logout', [NurseDashboardController::class, 'logout'])->name('nurse.logout');
@@ -457,6 +460,7 @@ Route::get('dentist/login', [DentistDashboardController::class, 'create'])->name
 Route::post('dentist/login', [DentistDashboardController::class, 'dentistLogin'])->name('dentist.login.submit');
 
 Route::middleware(['auth:dentist'])->group(function () {
+    Route::get('/dentist/medication-suggestions', MedicationSuggestionController::class)->name('dentist.medication-suggestions');
     // dd('sdddddddsd');
     Route::get('/dentist/dashboard', [DentistDashboardController::class, 'index'])->name('dentist.dashboard');
     Route::get('/dentist/notifications', [DentistActivityNotificationController::class, 'index'])
